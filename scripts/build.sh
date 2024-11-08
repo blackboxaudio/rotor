@@ -13,7 +13,7 @@ BUILD_TYPE=Debug
 COMPANY_NAME="Black Box Audio"
 PLUGIN_NAME=Rotor
 
-JUCE_CODE_COMMIT=545e9f353a6a336c5d1616796024b30d4bbed04b
+JUCE_CODE_COMMIT=2f980209cc4091a4490bb1bafc5d530f16834e58
 
 for i in "$@"; do
     case $i in
@@ -61,6 +61,10 @@ fi
 
 if [ ! -d "./juce/build" ]; then
     cd ./juce
+
+    def_name="JUCE_MODAL_LOOPS_PERMITTED"
+    def_value="1"
+    perl -i -pe "s/#define $def_name.*/#define $def_name $def_value/" modules/juce_core/system/juce_PlatformDefs.h
 
     echo -e "Configuring JUCE...\n"
     cmake -B bin .
