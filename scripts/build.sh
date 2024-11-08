@@ -10,8 +10,10 @@ DAW_TO_OPEN=
 REMOVE_PREV_BUILD=false
 BUILD_TYPE=Debug
 
-COMPANY_NAME="Black Box DSP"
+COMPANY_NAME="Black Box Audio"
 PLUGIN_NAME=Rotor
+
+JUCE_CODE_COMMIT=545e9f353a6a336c5d1616796024b30d4bbed04b
 
 for i in "$@"; do
     case $i in
@@ -50,9 +52,8 @@ if [ ! -d "./juce" ]; then
 
     cd ./juce
 
-    git checkout develop
-    git pull
-    
+    git checkout "$JUCE_CODE_COMMIT"
+
     cd ../
 
     echo -e "\n[Success] Cloned JUCE repository\n"
@@ -92,16 +93,18 @@ fi
 
 if [ ${COPY_BUILD_STEP} = true ]; then
     if [[ ${OSTYPE} == "darwin"* ]]; then
-        rm -rf "/Library/Audio/Plug-Ins/VST3/${PLUGIN_NAME}.vst3"
-        cp -r "./bin/${PLUGIN_NAME}_artefacts/VST3/${PLUGIN_NAME}.vst3" "/Library/Audio/Plug-Ins/VST3/${PLUGIN_NAME}.vst3"
+        mkdir -p "/Library/Audio/Plug-Ins/VST3/${COMPANY_NAME}"
+        rm -rf "/Library/Audio/Plug-Ins/VST3/${COMPANY_NAME}/${PLUGIN_NAME}.vst3"
+        cp -r "./bin/${PLUGIN_NAME}_artefacts/VST3/${PLUGIN_NAME}.vst3" "/Library/Audio/Plug-Ins/VST3/${COMPANY_NAME}/${PLUGIN_NAME}.vst3"
         echo -e "[Success] Copied VST3 bundle to plugins directory!\n"
 
         rm -rf "/Library/Audio/Plug-Ins/Components/${PLUGIN_NAME}.component"
         cp -r "./bin/${PLUGIN_NAME}_artefacts/AU/${PLUGIN_NAME}.component" "/Library/Audio/Plug-Ins/Components/${PLUGIN_NAME}.component"
         echo -e "[Success] Copied AU bundle to plugins directory!\n"
     else
-        rm -f "/c/Program Files/Steinberg/Vst3Plugins/${PLUGIN_NAME}.vst3"
-        cp "./bin/${PLUGIN_NAME}_artefacts/${BUILD_TYPE}/VST3/${PLUGIN_NAME}.vst3/Contents/x86_64-win/${PLUGIN_NAME}.vst3" "/c/Program Files/Steinberg/Vst3Plugins/${PLUGIN_NAME}.vst3"
+        mkdir -p "/c/Program Files/Steinberg/Vst3Plugins/${COMPANY_NAME}"
+        rm -f "/c/Program Files/Steinberg/Vst3Plugins/${COMPANY_NAME}/${PLUGIN_NAME}.vst3"
+        cp "./bin/${PLUGIN_NAME}_artefacts/${BUILD_TYPE}/VST3/${PLUGIN_NAME}.vst3/Contents/x86_64-win/${PLUGIN_NAME}.vst3" "/c/Program Files/Steinberg/Vst3Plugins/${COMPANY_NAME}/${PLUGIN_NAME}.vst3"
         echo -e "[Success] Copied VST3 bundle to plugins directory!\n"
     fi
 fi

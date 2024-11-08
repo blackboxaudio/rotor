@@ -9,14 +9,17 @@ add_subdirectory(juce)
 
 juce_add_plugin(Rotor
         VERSION "1.0.0"
-        COMPANY_NAME "Black Box DSP"
+        COMPANY_NAME "Black Box Audio"
+        COMPANY_WEBSITE "https://bbx-audio.com"
         IS_SYNTH FALSE
         IS_MIDI_EFFECT FALSE
         NEEDS_MIDI_INPUT FALSE
         NEEDS_MIDI_OUTPUT FALSE
-        PLUGIN_MANUFACTURER_CODE Bkbx
+        PLUGIN_MANUFACTURER_CODE BBXA
         PLUGIN_CODE Rotr
-        FORMATS AU VST3
+        PLUGIN_NAME Rotor
+        BUNDLE_ID "com.blackboxaudio.rotor"
+        FORMATS AU AUv3 VST3
         PRODUCT_NAME "Rotor")
 
 # Generate the JUCE header file for our source code
