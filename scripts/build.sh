@@ -79,7 +79,7 @@ if [ ${PRECOMPILE_STEP} = true ]; then
 fi
 
 echo -e "Configuring ${PLUGIN_NAME}...\n"
-cmake -B bin .
+cmake -B bin . -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 echo -e "\n[Success] Configured plugin build!\n"
 
 echo -e "Building ${PLUGIN_NAME}...\n"

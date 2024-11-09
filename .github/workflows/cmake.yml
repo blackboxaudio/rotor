@@ -29,7 +29,7 @@ jobs:
     # JUCE
     - name: Configure JUCE
       working-directory: ${{runner.workspace}}/rotor/JUCE
-      run: cmake -B bin .
+      run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE}}
 
     - name: Build JUCE
       working-directory: ${{runner.workspace}}/rotor/JUCE
