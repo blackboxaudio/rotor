@@ -37,7 +37,8 @@ target_compile_definitions(Rotor PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
-        JUCE_DISPLAY_SPLASH_SCREEN=0)
+        JUCE_DISPLAY_SPLASH_SCREEN=0
+        JUCE_MODAL_LOOPS_PERMITTED=1)
 
 # Add binary data from resources folder
 juce_add_binary_data(RotorData HEADER_NAME "RotorData.h" NAMESPACE RotorData SOURCES

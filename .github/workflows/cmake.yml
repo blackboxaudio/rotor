@@ -16,10 +16,10 @@ jobs:
       BUILD_TYPE: Release
 
     steps:
-    - name: Prepare
+    - name: Checkout Repo
       uses: actions/checkout@v2
 
-    - name: "1/7: Clone (JUCE)"
+    - name: Clone JUCE
       uses: actions/checkout@v2
       with:
         repository: juce-framework/JUCE
@@ -27,28 +27,24 @@ jobs:
         path: ${{runner.workspace}}/rotor/JUCE
   
     # JUCE
-    - name: "2/7: Preprocessor Definitions"
-      working-directory: ${{runner.workspace}}/rotor/JUCE
-      run: perl -i -pe "s/#define JUCE_MODAL_LOOPS_PERMITTED.*/#define JUCE_MODAL_LOOPS_PERMITTED 1/" modules/juce_core/system/juce_PlatformDefs.h
-
-    - name: "3/7: Configure JUCE"
+    - name: Configure JUCE
       working-directory: ${{runner.workspace}}/rotor/JUCE
       run: cmake -B bin .
 
-    - name: "4/7: Build JUCE"
+    - name: Build JUCE
       working-directory: ${{runner.workspace}}/rotor/JUCE
       run: cmake --build bin
 
     # Rotor
-    - name: "5/7: Precompile Rotor"
+    - name: Precompile Rotor
       working-directory: ${{runner.workspace}}/rotor
       run: chmod +x ./scripts/precompile.sh && ./scripts/precompile.sh
 
-    - name: "6/7: Configure Rotor"
+    - name: Configure Rotor
       working-directory: ${{runner.workspace}}/rotor
       run: cmake -B bin .
 
-    - name: "7/7: Build Rotor"
+    - name: Build Rotor
       working-directory: ${{runner.workspace}}/rotor
       run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target Rotor_All
 
