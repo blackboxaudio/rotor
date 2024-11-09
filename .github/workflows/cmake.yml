@@ -16,7 +16,7 @@ jobs:
       BUILD_TYPE: Release
 
     steps:
-    - name: "Preparation"
+    - name: Prepare
       uses: actions/checkout@v2
 
     - name: "1/7: Clone (JUCE)"
@@ -31,31 +31,31 @@ jobs:
       working-directory: ${{runner.workspace}}/rotor/JUCE
       run: perl -i -pe "s/#define JUCE_MODAL_LOOPS_PERMITTED.*/#define JUCE_MODAL_LOOPS_PERMITTED 1/" modules/juce_core/system/juce_PlatformDefs.h
 
-    - name: "3/7: Configuration (JUCE)"
+    - name: "3/7: Configure JUCE"
       working-directory: ${{runner.workspace}}/rotor/JUCE
       run: cmake -B bin .
 
-    - name: "4/7: Build (JUCE)"
+    - name: "4/7: Build JUCE"
       working-directory: ${{runner.workspace}}/rotor/JUCE
       run: cmake --build bin
 
     # Rotor
-    - name: "5/7: Precompilation (Rotor)"
+    - name: "5/7: Precompile Rotor"
       working-directory: ${{runner.workspace}}/rotor
       run: chmod +x ./scripts/precompile.sh && ./scripts/precompile.sh
 
-    - name: "6/7: Configuration (Rotor)"
+    - name: "6/7: Configure Rotor"
       working-directory: ${{runner.workspace}}/rotor
       run: cmake -B bin .
 
-    - name: "7/7: Build (Rotor)"
+    - name: "7/7: Build Rotor"
       working-directory: ${{runner.workspace}}/rotor
       run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target Rotor_All
 
     # Windows
     - name: Zip Artifact (Windows)
       if: runner.os == 'Windows'
-      run: zip rotor.zip bin/Rotor_artefacts/Release/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3
+      run: Compress-Archive -Path bin/Rotor_artefacts/Release/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3 -Destination rotor.zip
 
     - name: Upload Artifact (Windows)
       if: runner.os == 'Windows'
