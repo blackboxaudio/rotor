@@ -67,7 +67,7 @@ jobs:
     # MacOS
     - name: Zip Artifact (MacOS)
       if: runner.os == 'macOS'
-      run: zip rotor.zip bin/Rotor_artefacts/VST3/Rotor.vst3 bin/Rotor_artefacts/AU/Rotor.component
+      run: zip -r rotor.zip bin/Rotor_artefacts/VST3/Rotor.vst3 bin/Rotor_artefacts/AU/Rotor.component
 
     - name: Upload Artifact (MacOS)
       if: runner.os == 'macOS'
