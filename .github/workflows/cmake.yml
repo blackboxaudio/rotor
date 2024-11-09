@@ -42,7 +42,7 @@ jobs:
 
     - name: Configure Rotor
       working-directory: ${{runner.workspace}}/rotor
-      run: cmake -B bin .
+      run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE}}
 
     - name: Build Rotor
       working-directory: ${{runner.workspace}}/rotor
