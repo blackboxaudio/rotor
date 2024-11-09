@@ -19,3 +19,5 @@ design/
 project/Backup/
 project/Samples/
 project/Desktop.ini
+
+**/cmake-build-debug

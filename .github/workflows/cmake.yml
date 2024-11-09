@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest, macos-13]
 
     env:
       BUILD_TYPE: Release
@@ -51,3 +51,25 @@ jobs:
     - name: "7/7: Build (Rotor)"
       working-directory: ${{runner.workspace}}/rotor
       run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target Rotor_All
+
+    # Uploading artifacts
+    - name: Upload VST3 Artifact (Windows)
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rotor.vst3 (Windows)
+        path: "bin/Rotor_artefacts/Release/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3"
+
+    - name: Upload VST3 Artifact (MacOS)
+      if: runner.os == 'macOS'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rotor.vst3 (MacOS)
+        path: "bin/Rotor_artefacts/VST3/Rotor.vst3"
+
+    - name: Upload AU Artifact (MacOS)
+      if: runner.os == 'macOS'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Rotor.component (MacOS)
+        path: "bin/Rotor_artefacts/AU/Rotor.component"
