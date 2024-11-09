@@ -63,7 +63,7 @@ if [ ! -d "./juce/build" ]; then
     cd ./juce
 
     echo -e "Configuring JUCE...\n"
-    cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE}}
+    cmake -B bin . -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
     echo -e "\n[Success] Configured JUCE build!\n"
 
     echo -e "Building JUCE...\n"
