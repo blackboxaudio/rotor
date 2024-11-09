@@ -15,7 +15,7 @@ juce_add_plugin(Rotor
         IS_MIDI_EFFECT FALSE
         NEEDS_MIDI_INPUT FALSE
         NEEDS_MIDI_OUTPUT FALSE
-        PLUGIN_MANUFACTURER_CODE BBXA
+        PLUGIN_MANUFACTURER_CODE BBxA
         PLUGIN_CODE Rotr
         PLUGIN_NAME Rotor
         BUNDLE_ID "com.blackboxaudio.rotor"
