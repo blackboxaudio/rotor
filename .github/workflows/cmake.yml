@@ -53,25 +53,25 @@ jobs:
       run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target Rotor_All
 
     # Windows
-    - name: Zip Artifact
+    - name: Zip Artifact (Windows)
       if: runner.os == 'Windows'
-      run: zip -r rotor.zip bin/Rotor_artefacts/Release/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3
+      run: zip rotor.zip bin/Rotor_artefacts/Release/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3
 
-    - name: Upload
+    - name: Upload Artifact (Windows)
       if: runner.os == 'Windows'
       uses: actions/upload-artifact@v4
       with:
-        name: rotor-windows.zip
+        name: rotor-windows
         path: rotor.zip
 
     # MacOS
-    - name: Zip Artifact
+    - name: Zip Artifact (MacOS)
       if: runner.os == 'macOS'
-      run: zip -r rotor.zip bin/Rotor_artefacts/VST3/Rotor.vst3 bin/Rotor_artefacts/AU/Rotor.component
+      run: zip rotor.zip bin/Rotor_artefacts/VST3/Rotor.vst3 bin/Rotor_artefacts/AU/Rotor.component
 
-    - name: Upload
+    - name: Upload Artifact (MacOS)
       if: runner.os == 'macOS'
       uses: actions/upload-artifact@v4
       with:
-        name: rotor-macos.zip
+        name: rotor-macos
         path: rotor.zip
