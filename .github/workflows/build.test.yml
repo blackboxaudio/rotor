@@ -11,11 +11,6 @@ on:
                 options:
                     - Release
                     - Debug
-            upload_artifacts:
-                description: Upload plugin binaries
-                required: false
-                type: boolean
-                default: true
 
 jobs:
     Trigger:
@@ -29,4 +24,4 @@ jobs:
         with:
             os: ${{ matrix.os }}
             build_type: ${{ inputs.build_type }}
-            upload_artifacts: ${{ inputs.upload_artifacts }}
+            upload_artifacts: ${{ true }}

@@ -57,7 +57,7 @@ jobs:
 
             # Upload (Windows)
             -   name: Upload VST3 (Windows)
-                if: ${{ inputs.upload && inputs.os == 'windows-2022' }}
+                if: ${{ inputs.upload_artifacts && inputs.os == 'windows-2022' }}
                 uses: actions/upload-artifact@v4
                 with:
                     name: rotor-windows
@@ -65,14 +65,14 @@ jobs:
 
             # Upload (MacOS)
             - name: Move Binaries (MacOS)
-              if: ${{ inputs.upload && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
+              if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
               run: |
                   mkdir -p bin/dist \
                   mv bin/Rotor_artefacts/VST3/Rotor.vst3 bin/dist \
                   mv bin/Rotor_artefacts/AU/Rotor.component bin/dist
 
             - name: Upload AU & VST3 (MacOS)
-              if: ${{ inputs.upload && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
+              if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
               uses: actions/upload-artifact@v4
               with:
                   name: rotor-macos
