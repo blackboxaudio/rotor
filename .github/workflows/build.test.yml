@@ -1,0 +1,25 @@
+name: Build (Test)
+
+on:
+    workflow_dispatch:
+        inputs:
+            build_type:
+                required: true
+                type: choice
+                options:
+                    - Release
+                    - Debug
+
+jobs:
+    Trigger:
+        name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Build
+        uses: ./.github/workflows/build.reusable.yml
+        if: ${{ always() }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: ['MacOS', 'Windows']
+        with:
+            os: ${{ matrix.os }}
+            build_type: ${{ inputs.build_type }}
+            upload_artifacts: true

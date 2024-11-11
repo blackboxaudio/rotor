@@ -1,0 +1,19 @@
+name: Build (CI)
+
+on:
+    pull_request:
+    push:
+        branches: ['main', 'develop']
+
+jobs:
+    Trigger:
+        name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Build
+        uses: ./.github/workflows/build.reusable.yml
+        if: ${{ always() }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: ['MacOS', 'Windows']
+        with:
+            os: ${{ matrix.os }}
+            build_type: Release

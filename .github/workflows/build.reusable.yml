@@ -1,0 +1,84 @@
+name: Build
+
+on:
+    workflow_call:
+        inputs:
+            os:
+                required: true
+                type: choice
+                options:
+                    - MacOS
+                    - Windows
+            build_type:
+                required: true
+                type: choice
+                options:
+                    - Release
+                    - Debug
+            upload_artifacts:
+                required: false
+                type: boolean
+                default: false
+
+jobs:
+    CMake:
+        name: ${{ inputs.os }} ${{ inputs.build_type }} Build
+        if: ${{ always() }}
+        runs-on: ${{ inputs.os == 'MacOS' && 'macos-13' || 'windows-latest' }}
+        env:
+            BUILD_TYPE: ${{ inputs.build_type }}
+        steps:
+            -   name: Checkout Repo
+                uses: actions/checkout@v4
+
+            -   name: Clone JUCE
+                uses: actions/checkout@v2
+                with:
+                    repository: juce-framework/JUCE
+                    ref: 2f980209cc4091a4490bb1bafc5d530f16834e58
+                    path: ${{ runner.workspace }}/rotor/JUCE
+
+            # JUCE
+            -   name: Configure JUCE
+                working-directory: ${{ runner.workspace }}/rotor/JUCE
+                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE}}
+
+            -   name: Build JUCE
+                working-directory: ${{ runner.workspace }}/rotor/JUCE
+                run: cmake --build bin
+
+            # Rotor
+            -   name: Precompile Rotor
+                working-directory: ${{ runner.workspace }}/rotor
+                run: chmod +x ./scripts/precompile.sh && ./scripts/precompile.sh
+
+            -   name: Configure Rotor
+                working-directory: ${{ runner.workspace }}/rotor
+                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE}}
+
+            -   name: Build Rotor
+                working-directory: ${{ runner.workspace }}/rotor
+                run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target Rotor_All
+
+            # Upload (Windows)
+            -   name: Upload VST3 (Windows)
+                if: ${{ inputs.upload && inputs.os == 'Windows' }}
+                uses: actions/upload-artifact@v4
+                with:
+                    name: rotor-windows
+                    path: bin/Rotor_artefacts/Release/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3
+
+            # Upload (MacOS)
+            - name: Move Binaries (MacOS)
+              if: ${{ inputs.upload && inputs.os == 'MacOS' }}
+              run: |
+                  mkdir -p bin/dist \
+                  mv bin/Rotor_artefacts/VST3/Rotor.vst3 bin/dist \
+                  mv bin/Rotor_artefacts/AU/Rotor.component bin/dist
+
+            - name: Upload AU & VST3 (MacOS)
+              if: ${{ inputs.upload && inputs.os == 'MacOS' }}
+              uses: actions/upload-artifact@v4
+              with:
+                  name: rotor-macos
+                  path: bin/dist
