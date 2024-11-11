@@ -6,7 +6,11 @@ on:
             build_type:
                 description: Target build environment, e.g. Release, Debug
                 required: true
-                type: string
+                type: choice
+                default: Release
+                options:
+                    - Release
+                    - Debug
 
 jobs:
     Trigger:
