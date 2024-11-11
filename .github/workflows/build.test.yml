@@ -4,7 +4,7 @@ on:
     workflow_dispatch:
         inputs:
             build_type:
-                description: Target build environment, e.g. Release, Debug
+                description: Target plugin build environment
                 required: true
                 type: choice
                 default: Release

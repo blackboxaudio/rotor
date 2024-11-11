@@ -4,11 +4,9 @@ on:
     workflow_call:
         inputs:
             os:
-                description: Target operating system, e.g. macos-13, macos-13-xlarge, windows-2022
                 required: true
                 type: string
             build_type:
-                description: Target build environment, e.g. Release, Debug
                 required: true
                 type: string
             upload_artifacts:
