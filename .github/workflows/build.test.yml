@@ -1,4 +1,4 @@
-name: Build (Test)
+name: Build
 
 on:
     workflow_dispatch:
@@ -10,14 +10,14 @@ on:
 
 jobs:
     Trigger:
-        name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Build
+        name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Builds
         uses: ./.github/workflows/build.reusable.yml
         if: ${{ always() }}
         strategy:
             fail-fast: false
             matrix:
-                os: ['MacOS', 'Windows']
+                os: ['macos-13', 'macos-13-xlarge', 'windows-2022']
         with:
             os: ${{ matrix.os }}
             build_type: ${{ inputs.build_type }}
-            upload_artifacts: true
+            upload_artifacts: ${{ true }}

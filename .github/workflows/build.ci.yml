@@ -7,13 +7,13 @@ on:
 
 jobs:
     Trigger:
-        name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Build
+        name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Builds
         uses: ./.github/workflows/build.reusable.yml
         if: ${{ always() }}
         strategy:
-            fail-fast: false
+            fail-fast: true
             matrix:
-                os: ['MacOS', 'Windows']
+                os: ['macos-13', 'macos-13-xlarge', 'windows-2022']
         with:
             os: ${{ matrix.os }}
             build_type: Release
