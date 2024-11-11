@@ -1,7 +1,7 @@
 # Rotor
 
 [![Build (CI)](https://github.com/blackboxaudio/rotor/actions/workflows/build.ci.yml/badge.svg)](https://github.com/blackboxaudio/rotor/actions/workflows/build.ci.yml)
-[![JUCE](https://img.shields.io/badge/JUCE-v6.0.8-ff69b4)](https://juce.com/)
+[![JUCE](https://img.shields.io/badge/JUCE-v6.1.6-ff69b4)](https://juce.com/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 > Modern ring modulation effect plugin
@@ -19,7 +19,7 @@ To see it in action, make sure to check out the [demo](https://drive.google.com/
 
 ## Dependencies
 
-- JUCE (v6.0.8)
+- JUCE (v6.1.6)
 - VST3 SDK (v3.6.14)
 
 ## Usage
@@ -56,7 +56,7 @@ If you have any issues building the plugin, please contact me or file an issue.
 
 ## License
 
-Copyright (C) 2019 Matthew Maxwell
+Copyright (C) 2024 Black Box Audio 
 
 This program is free software: you can redistribute it and / or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
