@@ -11,6 +11,11 @@ on:
                 options:
                     - Release
                     - Debug
+            upload_artifacts:
+                description: Upload plugin binaries
+                required: false
+                type: boolean
+                default: true
 
 jobs:
     Trigger:
@@ -18,10 +23,10 @@ jobs:
         uses: ./.github/workflows/build.reusable.yml
         if: ${{ always() }}
         strategy:
-            fail-fast: false
+            fail-fast: true
             matrix:
                 os: ['macos-13', 'windows-2022']
         with:
             os: ${{ matrix.os }}
             build_type: ${{ inputs.build_type }}
-            upload_artifacts: ${{ true }}
+            upload_artifacts: ${{ inputs.upload_artifacts }}
