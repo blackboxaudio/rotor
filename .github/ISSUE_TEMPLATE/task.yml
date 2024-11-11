@@ -27,16 +27,3 @@ body:
       description: Please create a list of requirements necessary to complete this task.
     validations:
       required: true
-
-  - type: checkboxes
-    id: checklist
-    attributes:
-      label: Checklist
-      description: Please tick the following boxes before submitting this task.
-      options:
-        - label: I have linked the correct milestone and/or project(s)
-          required: true
-        - label: I have added the appropriate labels
-          required: true
-        - label: I have assigned this task to the correct people
-          required: false
