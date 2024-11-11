@@ -4,11 +4,9 @@ on:
     workflow_dispatch:
         inputs:
             build_type:
+                description: Target build environment, e.g. Release, Debug
                 required: true
-                type: choice
-                options:
-                    - Release
-                    - Debug
+                type: string
 
 jobs:
     Trigger:

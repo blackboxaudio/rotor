@@ -4,18 +4,15 @@ on:
     workflow_call:
         inputs:
             os:
+                description: Target operating system, e.g. MacOS, Windows
                 required: true
-                type: choice
-                options:
-                    - MacOS
-                    - Windows
+                type: string
             build_type:
+                description: Target build environment, e.g. Release, Debug
                 required: true
-                type: choice
-                options:
-                    - Release
-                    - Debug
+                type: string
             upload_artifacts:
+                description: Upload binaries
                 required: false
                 type: boolean
                 default: false
@@ -24,7 +21,7 @@ jobs:
     CMake:
         name: ${{ inputs.os }} ${{ inputs.build_type }} Build
         if: ${{ always() }}
-        runs-on: ${{ inputs.os == 'MacOS' && 'macos-13' || 'windows-latest' }}
+        runs-on: ${{ inputs.os == 'MacOS' && 'macos-13' || 'windows-2022' }}
         env:
             BUILD_TYPE: ${{ inputs.build_type }}
         steps:
@@ -41,7 +38,7 @@ jobs:
             # JUCE
             -   name: Configure JUCE
                 working-directory: ${{ runner.workspace }}/rotor/JUCE
-                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE}}
+                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ inputs.build_type }}
 
             -   name: Build JUCE
                 working-directory: ${{ runner.workspace }}/rotor/JUCE
@@ -54,11 +51,11 @@ jobs:
 
             -   name: Configure Rotor
                 working-directory: ${{ runner.workspace }}/rotor
-                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE}}
+                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ inputs.build_type }}
 
             -   name: Build Rotor
                 working-directory: ${{ runner.workspace }}/rotor
-                run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target Rotor_All
+                run: cmake --build bin --config ${{ inputs.build_type }} --target Rotor_All
 
             # Upload (Windows)
             -   name: Upload VST3 (Windows)
