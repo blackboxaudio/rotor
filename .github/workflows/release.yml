@@ -52,14 +52,14 @@ jobs:
 #                working-directory: ${{ runner.workspace }}/rotor
 #                run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target ${{ env.PLUGIN_NAME }}_All --parallel 4
 #
-#            - name: Set Environment
-#              run: |
-#                  ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-#                  echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
-#                  echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
-#                  echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
-#                  echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
-#
+            - name: Set Environment
+              run: |
+                  ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ env.BUILD_TYPE }}
+                  echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
+                  echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+                  echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+                  echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
+
 #            - name: Sign Binaries (MacOS)
 #              if: ${{ matrix.os == 'macos-14' }}
 #              run: |
@@ -75,6 +75,9 @@ jobs:
                   mkdir -p packaging/dmg
                   
                   # Test
+                  mkdir -p "${{ env.ARTIFACTS_PATH }}"
+                  mkdir -p "${{ env.ARTIFACTS_PATH }}/VST3"
+                  mkdir -p "${{ env.ARTIFACTS_PATH }}/AU"
                   echo "Blah blah VST3" >> "${{ env.VST3_PATH }}"
                   echo "Blah blah AU" >> "${{ env.AU_PATH }}"
                   
