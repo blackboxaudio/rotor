@@ -13,6 +13,8 @@
     "format": "UDZO",
     "contents": [
         { "x": 250, "y": 200, "type": "file", "path": "dmg/Rotor.vst3" },
-        { "x": 480, "y": 200, "type": "file", "path": "dmg/Rotor.component" }
+        { "x": 480, "y": 200, "type": "file", "path": "dmg/Your Mac's VST3 Folder" },
+        { "x": 250, "y": 300, "type": "file", "path": "dmg/Rotor.component" },
+        { "x": 480, "y": 300, "type": "file", "path": "dmg/Your Mac's Component Folder" }
     ]
 }
