@@ -27,7 +27,7 @@ jobs:
 
             - name: Import Certificates (MacOS)
               uses: apple-actions/import-codesign-certs@v3
-              if: ${{ matrix.os == 'macos-13' }}
+              if: ${{ matrix.os == 'macos-14' }}
               with:
                   p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
                   p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
@@ -61,13 +61,13 @@ jobs:
 #                  echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
 #
 #            - name: Sign Binaries (MacOS)
-#              if: ${{ matrix.os == 'macos-13' }}
+#              if: ${{ matrix.os == 'macos-14' }}
 #              run: |
 #                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
 #                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
 
             - name: Package Binaries (MacOS)
-              if: ${{ matrix.os == 'macos-13' }}
+              if: ${{ matrix.os == 'macos-14' }}
               run: |
                   # Setup tools and directories
                   python3 -m pip install setuptools --break-system-packages
@@ -92,7 +92,7 @@ jobs:
                   scrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
 
             - name: Upload DMG (MacOS)
-              if: ${{ matrix.os == 'macos-13' }}
+              if: ${{ matrix.os == 'macos-14' }}
               uses: actions/upload-artifact@v4
               with:
                   name: ${{ env.ARTIFACT_NAME }}.dmg
