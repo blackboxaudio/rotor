@@ -3,100 +3,93 @@ name: Release
 on: workflow_dispatch
 
 jobs:
-    Test:
-        name: ${{ matrix.os }} Release Build
-        runs-on: ${{ matrix.os }}
-        strategy:
-            matrix:
-                os: ['macos-14']
-        env:
-            BUILD_TYPE: Release
-            PLUGIN_NAME: Rotor
-            BUNDLE_ID: com.bbx-audio.rotor
-            VERSION: 1.0.0
-        steps:
-            -   name: Checkout Repo
-                uses: actions/checkout@v4
+  Test:
+    name: ${{ matrix.os }} Release Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ 'macos-14' ]
+    env:
+      BUILD_TYPE: Release
+      PLUGIN_NAME: Rotor
+      BUNDLE_ID: com.bbx-audio.rotor
+      VERSION: 1.0.0
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-            -   name: Clone JUCE
-                uses: actions/checkout@v2
-                with:
-                    repository: juce-framework/JUCE
-                    ref: 2f980209cc4091a4490bb1bafc5d530f16834e58
-                    path: ${{ runner.workspace }}/rotor/JUCE
+      - name: Clone JUCE
+        uses: actions/checkout@v2
+        with:
+          repository: juce-framework/JUCE
+          ref: 2f980209cc4091a4490bb1bafc5d530f16834e58
+          path: ${{ runner.workspace }}/rotor/JUCE
 
-            - name: Import Certificates (MacOS)
-              uses: apple-actions/import-codesign-certs@v3
-              if: ${{ matrix.os == 'macos-14' }}
-              with:
-                  p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
-                  p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
-#
-#            -   name: Configure JUCE
-#                working-directory: ${{ runner.workspace }}/rotor/JUCE
-#                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-#
-#            -   name: Build JUCE
-#                working-directory: ${{ runner.workspace }}/rotor/JUCE
-#                run: cmake --build bin --parallel 4
-#
-#            -   name: Precompile Rotor
-#                working-directory: ${{ runner.workspace }}/rotor
-#                run: ./scripts/precompile.sh
-#
-#            -   name: Configure Rotor
-#                working-directory: ${{ runner.workspace }}/rotor
-#                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-#
-#            -   name: Build Rotor
-#                working-directory: ${{ runner.workspace }}/rotor
-#                run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target ${{ env.PLUGIN_NAME }}_All --parallel 4
-#
-            - name: Set Environment
-              run: |
-                  ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-                  echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
-                  echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
-                  echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
-                  echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
+      - name: Import Certificates (MacOS)
+        uses: apple-actions/import-codesign-certs@v3
+        if: ${{ matrix.os == 'macos-14' }}
+        with:
+          p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
+          p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
 
-#            - name: Sign Binaries (MacOS)
-#              if: ${{ matrix.os == 'macos-14' }}
-#              run: |
-#                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
-#                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
+      - name: Configure JUCE
+        working-directory: ${{ runner.workspace }}/rotor/JUCE
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
 
-            - name: Package Binaries (MacOS)
-              if: ${{ matrix.os == 'macos-14' }}
-              run: |
-                  # Setup tools and directories
-                  python3 -m pip install setuptools --break-system-packages
-                  npm install -g appdmg
-                  mkdir -p packaging/dmg
-                  
-                  # Test
-                  mkdir -p "${{ env.ARTIFACTS_PATH }}"
-                  mkdir -p "${{ env.ARTIFACTS_PATH }}/VST3"
-                  mkdir -p "${{ env.ARTIFACTS_PATH }}/AU"
-                  echo "Blah blah VST3" >> "${{ env.VST3_PATH }}"
-                  echo "Blah blah AU" >> "${{ env.AU_PATH }}"
-                  
-                  # Create DMG symlink directories
-                  sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/Components && sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/VST3
-                  ln -s /Library/Audio/Plug-Ins/VST3 "packaging/dmg/VST3 folder"
-                  ln -s /Library/Audio/Plug-Ins/Components "packaging/dmg/Component folder"
-                  mv "${{ env.VST3_PATH }}" packaging/dmg
-                  mv "${{ env.AU_PATH }}" packaging/dmg
-                  
-                  # Create the .dmg
-                  cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}
-                  codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.BUNDLE_ID }} --force "${{ env.ARTIFACT_NAME }}.dmg"
-                  xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
-                  scrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
+      - name: Build JUCE
+        working-directory: ${{ runner.workspace }}/rotor/JUCE
+        run: cmake --build bin --parallel 4
 
-            - name: Upload DMG (MacOS)
-              if: ${{ matrix.os == 'macos-14' }}
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ${{ env.ARTIFACT_NAME }}.dmg
-                  path: packaging/${{ env.ARTIFACT_NAME }}.dmg
+      - name: Precompile Rotor
+        working-directory: ${{ runner.workspace }}/rotor
+        run: ./scripts/precompile.sh
+
+      - name: Configure Rotor
+        working-directory: ${{ runner.workspace }}/rotor
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+      - name: Build Rotor
+        working-directory: ${{ runner.workspace }}/rotor
+        run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target ${{ env.PLUGIN_NAME }}_All --parallel 4
+
+      - name: Set Environment
+        run: |
+          ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ env.BUILD_TYPE }}
+          echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
+          echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+          echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
+
+      - name: Sign Binaries (MacOS)
+        if: ${{ matrix.os == 'macos-14' }}
+        run: |
+          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
+          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
+
+      - name: Package Binaries (MacOS)
+        if: ${{ matrix.os == 'macos-14' }}
+        run: |
+          # Setup tools and directories
+          python3 -m pip install setuptools --break-system-packages
+          npm install -g appdmg
+          mkdir -p packaging/dmg
+          
+          # Create DMG symlink directories
+          sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/Components && sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/VST3
+          ln -s /Library/Audio/Plug-Ins/VST3 "packaging/dmg/VST3 folder"
+          ln -s /Library/Audio/Plug-Ins/Components "packaging/dmg/Component folder"
+          mv "${{ env.VST3_PATH }}" packaging/dmg
+          mv "${{ env.AU_PATH }}" packaging/dmg
+          
+          # Create the .dmg
+          cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
+          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.BUNDLE_ID }} --force "${{ env.ARTIFACT_NAME }}.dmg"
+          xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
+          scrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
+
+      - name: Upload DMG (MacOS)
+        if: ${{ matrix.os == 'macos-14' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}.dmg
+          path: packaging/${{ env.ARTIFACT_NAME }}.dmg
