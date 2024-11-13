@@ -40,7 +40,7 @@ jobs:
 
             -   name: Build JUCE
                 working-directory: ${{ runner.workspace }}/rotor/JUCE
-                run: cmake --build bin
+                run: cmake --build bin --parallel 4
 
             # Rotor
             -   name: Precompile Rotor
@@ -53,7 +53,7 @@ jobs:
 
             -   name: Build Rotor
                 working-directory: ${{ runner.workspace }}/rotor
-                run: cmake --build bin --config ${{ inputs.build_type }} --target Rotor_All
+                run: cmake --build bin --config ${{ inputs.build_type }} --target Rotor_All --parallel 4
 
             # Upload (Windows)
             -   name: Upload VST3 (Windows)

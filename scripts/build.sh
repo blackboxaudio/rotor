@@ -83,7 +83,7 @@ cmake -B bin . -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 echo -e "\n[Success] Configured plugin build!\n"
 
 echo -e "Building ${PLUGIN_NAME}...\n"
-cmake --build bin --config ${BUILD_TYPE} --target "${PLUGIN_NAME}_All"
+cmake --build bin --config ${BUILD_TYPE} --target "${PLUGIN_NAME}_All" --parallel 4
 echo -e "\n[Success] Built plugin executable(s)!\n"
 
 if [ ! -z ${DAW_TO_OPEN} ]; then
