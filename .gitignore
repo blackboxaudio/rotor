@@ -13,9 +13,6 @@ juce/
 bin/
 out/
 
-# Miscellaneous project stuff
-design/
-
 project/Backup/
 project/Samples/
 project/Desktop.ini

@@ -95,11 +95,11 @@ if [ ${COPY_BUILD_STEP} = true ]; then
     if [[ ${OSTYPE} == "darwin"* ]]; then
         mkdir -p "/Library/Audio/Plug-Ins/VST3/${COMPANY_NAME}"
         rm -rf "/Library/Audio/Plug-Ins/VST3/${COMPANY_NAME}/${PLUGIN_NAME}.vst3"
-        cp -r "./bin/${PLUGIN_NAME}_artefacts/VST3/${PLUGIN_NAME}.vst3" "/Library/Audio/Plug-Ins/VST3/${COMPANY_NAME}/${PLUGIN_NAME}.vst3"
+        cp -r "./bin/${PLUGIN_NAME}_artefacts/${BUILD_TYPE}/VST3/${PLUGIN_NAME}.vst3" "/Library/Audio/Plug-Ins/VST3/${COMPANY_NAME}/${PLUGIN_NAME}.vst3"
         echo -e "[Success] Copied VST3 bundle to plugins directory!\n"
 
         rm -rf "/Library/Audio/Plug-Ins/Components/${PLUGIN_NAME}.component"
-        cp -r "./bin/${PLUGIN_NAME}_artefacts/AU/${PLUGIN_NAME}.component" "/Library/Audio/Plug-Ins/Components/${PLUGIN_NAME}.component"
+        cp -r "./bin/${PLUGIN_NAME}_artefacts/${BUILD_TYPE}/AU/${PLUGIN_NAME}.component" "/Library/Audio/Plug-Ins/Components/${PLUGIN_NAME}.component"
         echo -e "[Success] Copied AU bundle to plugins directory!\n"
     else
         mkdir -p "/c/Program Files/Steinberg/Vst3Plugins/${COMPANY_NAME}"
