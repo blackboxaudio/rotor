@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Generates "PhantomData.h" (compiles binary resources) and copies to src directory. 
+# Generates "RotorData.h" (compiles binary resources) and copies to src directory.
 
 # CAUTION: This script needs to be run if any resources are added to make sure that
 # they are compiled into the build!

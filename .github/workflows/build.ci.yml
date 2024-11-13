@@ -5,6 +5,10 @@ on:
     push:
         branches: ['main', 'develop']
 
+concurrency:
+    group: ${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
     Trigger:
         name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Builds

@@ -38,7 +38,7 @@ jobs:
 
       - name: Build JUCE
         working-directory: ${{ runner.workspace }}/rotor/JUCE
-        run: cmake --build bin --parallel 4
+        run: cmake --build bin --config ${{ env.BUILD_TYPE }} --parallel 4
 
       - name: Precompile Rotor
         working-directory: ${{ runner.workspace }}/rotor

@@ -19,7 +19,7 @@ juce_add_plugin(Rotor
         PLUGIN_CODE Rotr
         PLUGIN_NAME Rotor
         BUNDLE_ID "com.bbx-audio.rotor"
-        FORMATS AU AUv3 VST3
+        FORMATS AU VST3
         PRODUCT_NAME "Rotor")
 
 # Generate the JUCE header file for our source code
