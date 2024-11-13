@@ -31,40 +31,40 @@ jobs:
               with:
                   p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
                   p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
-
-            -   name: Configure JUCE
-                working-directory: ${{ runner.workspace }}/rotor/JUCE
-                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-
-            -   name: Build JUCE
-                working-directory: ${{ runner.workspace }}/rotor/JUCE
-                run: cmake --build bin --parallel 4
-
-            -   name: Precompile Rotor
-                working-directory: ${{ runner.workspace }}/rotor
-                run: ./scripts/precompile.sh
-
-            -   name: Configure Rotor
-                working-directory: ${{ runner.workspace }}/rotor
-                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
-
-            -   name: Build Rotor
-                working-directory: ${{ runner.workspace }}/rotor
-                run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target ${{ env.PLUGIN_NAME }}_All --parallel 4
-
-            - name: Set Environment
-              run: |
-                  ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-                  echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
-                  echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
-                  echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
-                  echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
-
-            - name: Sign Binaries (MacOS)
-              if: ${{ matrix.os == 'macos-13' }}
-              run: |
-                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
-                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
+#
+#            -   name: Configure JUCE
+#                working-directory: ${{ runner.workspace }}/rotor/JUCE
+#                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+#
+#            -   name: Build JUCE
+#                working-directory: ${{ runner.workspace }}/rotor/JUCE
+#                run: cmake --build bin --parallel 4
+#
+#            -   name: Precompile Rotor
+#                working-directory: ${{ runner.workspace }}/rotor
+#                run: ./scripts/precompile.sh
+#
+#            -   name: Configure Rotor
+#                working-directory: ${{ runner.workspace }}/rotor
+#                run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+#
+#            -   name: Build Rotor
+#                working-directory: ${{ runner.workspace }}/rotor
+#                run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target ${{ env.PLUGIN_NAME }}_All --parallel 4
+#
+#            - name: Set Environment
+#              run: |
+#                  ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ env.BUILD_TYPE }}
+#                  echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
+#                  echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+#                  echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+#                  echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
+#
+#            - name: Sign Binaries (MacOS)
+#              if: ${{ matrix.os == 'macos-13' }}
+#              run: |
+#                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
+#                  codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
 
             - name: Package Binaries (MacOS)
               if: ${{ matrix.os == 'macos-13' }}
@@ -73,6 +73,10 @@ jobs:
                   python3 -m pip install setuptools --break-system-packages
                   npm install -g appdmg
                   mkdir -p packaging/dmg
+                  
+                  # Test
+                  echo "Blah blah VST3" >> "${{ env.VST3_PATH }}"
+                  echo "Blah blah AU" >> "${{ env.AU_PATH }}"
                   
                   # Create DMG symlink directories
                   sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/Components && sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/VST3
