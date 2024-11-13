@@ -18,7 +18,7 @@ juce_add_plugin(Rotor
         PLUGIN_MANUFACTURER_CODE BBxA
         PLUGIN_CODE Rotr
         PLUGIN_NAME Rotor
-        BUNDLE_ID "com.blackboxaudio.rotor"
+        BUNDLE_ID "com.bbx-audio.rotor"
         FORMATS AU AUv3 VST3
         PRODUCT_NAME "Rotor")
 
