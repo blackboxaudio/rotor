@@ -59,19 +59,12 @@ jobs:
           7z x pluginval_macOS.zip
           pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
 
-      - name: Import App Certificates (MacOS)
+      - name: Import Certificates (MacOS)
         uses: apple-actions/import-codesign-certs@v3
         if: ${{ matrix.os == 'macos-13' }}
         with:
-          p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
-          p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
-
-      - name: Import Installer Certificates (MacOS)
-        uses: apple-actions/import-codesign-certs@v3
-        if: ${{ matrix.os == 'macos-13' }}
-        with:
-          p12-file-base64: ${{ secrets.DEVELOPER_ID_INSTALLER_CERT }}
-          p12-password: ${{ secrets.DEVELOPER_ID_INSTALLER_PASSWORD }}
+          p12-file-base64: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS }}
+          p12-password: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS_PASSWORD }}
 
       - name: Sign Binaries (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
