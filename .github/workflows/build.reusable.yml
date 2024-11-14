@@ -44,7 +44,8 @@ jobs:
 
       - name: Precompile Rotor
         working-directory: ${{ runner.workspace }}/rotor
-        run: chmod +x ./scripts/precompile.sh && ./scripts/precompile.sh
+        shell: bash
+        run: ./scripts/precompile.sh
 
       - name: Configure Rotor
         working-directory: ${{ runner.workspace }}/rotor
