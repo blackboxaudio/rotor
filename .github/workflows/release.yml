@@ -104,6 +104,7 @@ jobs:
           
           # Create the .dmg
           cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
+          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.BUNDLE_ID }} --force "${{ env.ARTIFACT_NAME }}.dmg"
           xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
           xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
 
