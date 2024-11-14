@@ -14,7 +14,6 @@ jobs:
       PLUGIN_NAME: Rotor
       BUNDLE_ID: com.bbx-audio.rotor
       VERSION: 1.0.0
-      OS_ARCHITECTURE: x86_64
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -26,16 +25,9 @@ jobs:
           ref: 2f980209cc4091a4490bb1bafc5d530f16834e58
           path: ${{ runner.workspace }}/rotor/JUCE
 
-      - name: Import Certificates (MacOS)
-        uses: apple-actions/import-codesign-certs@v3
-        if: ${{ matrix.os == 'macos-13' }}
-        with:
-          p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
-          p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
-
       - name: Configure JUCE
         working-directory: ${{ runner.workspace }}/rotor/JUCE
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES=${{ env.OS_ARCHITECTURE }}
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build JUCE
         working-directory: ${{ runner.workspace }}/rotor/JUCE
@@ -47,7 +39,7 @@ jobs:
 
       - name: Configure Rotor
         working-directory: ${{ runner.workspace }}/rotor
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES=${{ env.OS_ARCHITECTURE }}
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build Rotor
         working-directory: ${{ runner.workspace }}/rotor
@@ -59,13 +51,20 @@ jobs:
           echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
           echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.VERSION }} (${{ runner.os }}-${{ env.OS_ARCHITECTURE }})" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.VERSION }} (${{ runner.os }})" >> $GITHUB_ENV
 
       - name: Pluginval
         run: |
           curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_macOS.zip"
           7z x pluginval_macOS.zip
           pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
+
+      - name: Import Certificates (MacOS)
+        uses: apple-actions/import-codesign-certs@v3
+        if: ${{ matrix.os == 'macos-13' }}
+        with:
+          p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
+          p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
 
       - name: Sign Binaries (MacOS)
         if: ${{ matrix.os == 'macos-13' }}

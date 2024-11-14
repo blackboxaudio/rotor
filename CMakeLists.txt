@@ -22,6 +22,9 @@ juce_add_plugin(Rotor
         FORMATS AU VST3
         PRODUCT_NAME "Rotor")
 
+# Create universal binaries to handle Intel- and ARM-based MacOS
+set_target_properties(Rotor PROPERTIES OSX_ARCHITECTURES "x86_64;arm64")
+
 # Generate the JUCE header file for our source code
 juce_generate_juce_header(Rotor)
 
