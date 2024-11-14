@@ -27,7 +27,7 @@ rm -rf ./bin
 cmake -B bin .
 echo -e "\n[Success] Configured ${PLUGIN_NAME} for CMake build!\n"
 
-cmake --build bin --config ${BUILD_TYPE} --target "${PLUGIN_NAME}_All" --parallel 4
+cmake --build bin --config ${BUILD_TYPE} --target "${PLUGIN_NAME}_All" --parallel 8
 echo -e "\n[Success] Built ${PLUGIN_NAME}!\n"
 
 rm -f src/${FILENAME}
