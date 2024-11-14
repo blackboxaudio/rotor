@@ -13,6 +13,7 @@ juce/
 bin/
 out/
 **/build
+**/dmg
 
 project/Backup/
 project/Samples/
