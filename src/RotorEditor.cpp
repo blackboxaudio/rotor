@@ -8,12 +8,14 @@
   ==============================================================================
 */
 
-#include "RotorData.h"
 #include "RotorEditor.h"
+#include "RotorData.h"
 
 //==============================================================================
 RotorAudioProcessorEditor::RotorAudioProcessorEditor(RotorAudioProcessor& p, AudioProcessorValueTreeState& vts)
-    : AudioProcessorEditor(&p), processor(p), valueTreeState(vts)
+    : AudioProcessorEditor(&p)
+    , processor(p)
+    , valueTreeState(vts)
 {
     // GUI variables
     int textBoxWidth = 80;
@@ -35,7 +37,7 @@ RotorAudioProcessorEditor::RotorAudioProcessorEditor(RotorAudioProcessor& p, Aud
         else
             modulationPulseWidthSlider.setEnabled(false);
     };
-    
+
     // RATE
     modulationRateSlider.setName("rate");
     modulationRateSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
@@ -66,7 +68,7 @@ RotorAudioProcessorEditor::RotorAudioProcessorEditor(RotorAudioProcessor& p, Aud
 
     // INVERSION
 
-    // slider 
+    // slider
     modulationInversionSlider.setName("inversion");
     modulationInversionSlider.setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
     modulationInversionSlider.setTextBoxStyle(Slider::NoTextBox, false, textBoxWidth, textBoxHeight);
@@ -107,14 +109,14 @@ RotorAudioProcessorEditor::RotorAudioProcessorEditor(RotorAudioProcessor& p, Aud
     preAnalyzer = std::make_unique<RotorAnalyzer>();
     addAndMakeVisible(preAnalyzer.get());
     preAnalyzer->setColours(Colour::fromRGBA(126, 105, 251, 255),
-                            Colour::fromRGBA( 67,  42, 208, 255).withAlpha(0.7f),
-                            Colour::fromRGBA( 99,  78, 228, 255).withAlpha(0.7f));
+        Colour::fromRGBA(67, 42, 208, 255).withAlpha(0.7f),
+        Colour::fromRGBA(99, 78, 228, 255).withAlpha(0.7f));
 
     postAnalyzer = std::make_unique<RotorAnalyzer>();
     addAndMakeVisible(postAnalyzer.get());
     postAnalyzer->setColours(Colour::fromRGBA(167, 100, 251, 255),
-                             Colour::fromRGBA(144,  78, 228, 255).withAlpha(0.7f),
-                             Colour::fromRGBA(116,  42, 208, 255).withAlpha(0.7f));
+        Colour::fromRGBA(144, 78, 228, 255).withAlpha(0.7f),
+        Colour::fromRGBA(116, 42, 208, 255).withAlpha(0.7f));
     preAnalyzer->toBehind(postAnalyzer.get());
 
     //==========================================================================
@@ -152,7 +154,7 @@ RotorAudioProcessorEditor::~RotorAudioProcessorEditor()
 }
 
 //==============================================================================
-void RotorAudioProcessorEditor::paint (Graphics& g)
+void RotorAudioProcessorEditor::paint(Graphics& g)
 {
     // draw background image (this method allows for dynamic resizing)
     Image backgroundImage = ImageCache::getFromMemory(RotorData::background_png, RotorData::background_pngSize);
@@ -164,14 +166,14 @@ void RotorAudioProcessorEditor::resized()
     // get canvas
     auto area = getLocalBounds();
 
-    // set layout variables 
+    // set layout variables
     auto margin = getWidth() / 30;
     auto sectionSize = getHeight() / 5;
     auto largeDialSize = getWidth() * 13 / 45;
-    auto smallDialSize = getWidth()  * 13 / 60;
+    auto smallDialSize = getWidth() * 13 / 60;
 
     // set font size according to GUI editor's width
-    int fontSize = getWidth() / 18; 
+    int fontSize = getWidth() / 18;
     lookAndFeel.setFontSize(fontSize);
 
     // update slider path stroke width
@@ -182,7 +184,7 @@ void RotorAudioProcessorEditor::resized()
     area.removeFromRight(margin);
 
     // OUTPUT ==================================================================
-   
+
     // designate area for drawing output's parameters' sliders
     auto outputArea = area.removeFromBottom(sectionSize);
     outputArea.removeFromBottom(margin * 2);
@@ -239,4 +241,4 @@ void RotorAudioProcessorEditor::resized()
     analyzerArea.removeFromBottom(margin);
     preAnalyzer->setBounds(analyzerArea);
     postAnalyzer->setBounds(analyzerArea);
-} 
+}

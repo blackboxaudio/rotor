@@ -15,10 +15,8 @@
 #include "RotorData.h"
 
 //==============================================================================
-class RotorLookAndFeel : public LookAndFeel_V4
-{
+class RotorLookAndFeel : public LookAndFeel_V4 {
 public:
-
     RotorLookAndFeel();
     ~RotorLookAndFeel();
 
@@ -28,8 +26,8 @@ public:
         float sliderPos, float rotaryStartAngle, float rotaryEndAngle,
         Slider& s) override;
 
-    void drawToggleButton(Graphics& g, ToggleButton& b, 
-        bool shouldDrawButtonAsHighlighted, 
+    void drawToggleButton(Graphics& g, ToggleButton& b,
+        bool shouldDrawButtonAsHighlighted,
         bool shouldDrawButtonAsDown) override;
 
     void setFontSize(int newSize);

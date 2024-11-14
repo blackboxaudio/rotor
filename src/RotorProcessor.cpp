@@ -5,37 +5,37 @@
   ==============================================================================
 */
 
-#include "RotorEditor.h"
 #include "RotorProcessor.h"
+#include "RotorEditor.h"
 
 //==============================================================================
 RotorAudioProcessor::RotorAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
-    : parameters(*this, nullptr, Identifier("Rotor"), createParameterLayout()),
-      AudioProcessor(BusesProperties()
-#if ! JucePlugin_IsMidiEffect
-#if ! JucePlugin_IsSynth 
-        .withInput("Input", AudioChannelSet::stereo(), true)
+    : parameters(*this, nullptr, Identifier("Rotor"), createParameterLayout())
+    , AudioProcessor(BusesProperties()
+#if !JucePlugin_IsMidiEffect
+#if !JucePlugin_IsSynth
+                         .withInput("Input", AudioChannelSet::stereo(), true)
 #endif
-        .withOutput("Output", AudioChannelSet::stereo(), true)
+                         .withOutput("Output", AudioChannelSet::stereo(), true)
 #endif
-    )
+      )
 #endif
 {
     // initialize value tree state parameters
-    modulationShape             = parameters.getRawParameterValue("waveform");
-    modulationRate              = parameters.getRawParameterValue("rate");
-    modulationNoise             = parameters.getRawParameterValue("noise");
-    modulationIsInverted        = parameters.getRawParameterValue("inversion");
-    pulseWidth                  = parameters.getRawParameterValue("pulseWidth");
-    level                       = parameters.getRawParameterValue("level"); 
-    mix                         = parameters.getRawParameterValue("mix");
+    modulationShape = parameters.getRawParameterValue("waveform");
+    modulationRate = parameters.getRawParameterValue("rate");
+    modulationNoise = parameters.getRawParameterValue("noise");
+    modulationIsInverted = parameters.getRawParameterValue("inversion");
+    pulseWidth = parameters.getRawParameterValue("pulseWidth");
+    level = parameters.getRawParameterValue("level");
+    mix = parameters.getRawParameterValue("mix");
 
     // previous parameter values' initializations
-    previousShape               = *modulationShape;
-    modulationInversionFactor   = getModulationInversion((bool) *modulationIsInverted);
-    previousPulseWidth          = *pulseWidth;
-    previousLevel               = *level;
+    previousShape = *modulationShape;
+    modulationInversionFactor = getModulationInversion((bool)*modulationIsInverted);
+    previousPulseWidth = *pulseWidth;
+    previousLevel = *level;
 }
 
 RotorAudioProcessor::~RotorAudioProcessor()
@@ -57,7 +57,7 @@ AudioProcessorValueTreeState::ParameterLayout RotorAudioProcessor::createParamet
     // RATE
     auto p_modulationRate = std::make_unique<AudioParameterFloat>(
         "rate", "Rate",
-        NormalisableRange<float>(10.0f, 12500.0f, 0.1f, getSkewFactor(10.0f, 12500.0f, 1000.0f), false), 
+        NormalisableRange<float>(10.0f, 12500.0f, 0.1f, getSkewFactor(10.0f, 12500.0f, 1000.0f), false),
         1000.0f);
     params.push_back(std::move(p_modulationRate));
 
@@ -136,8 +136,8 @@ double RotorAudioProcessor::getTailLengthSeconds() const
 
 int RotorAudioProcessor::getNumPrograms()
 {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1; // NB: some hosts don't cope very well if you tell them there are 0 programs,
+        // so this should be at least 1, even if you're not really implementing programs.
 }
 
 int RotorAudioProcessor::getCurrentProgram()
@@ -163,10 +163,10 @@ void RotorAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     // set frequency variables
     wavetableSize = 1024;
-    setPhaseDelta((double) *modulationRate, sampleRate);
+    setPhaseDelta((double)*modulationRate, sampleRate);
 
-    // write the wavetable according to current waveform   
-    setWavetable((int) *modulationShape);
+    // write the wavetable according to current waveform
+    setWavetable((int)*modulationShape);
 }
 
 void RotorAudioProcessor::releaseResources()
@@ -188,8 +188,8 @@ bool RotorAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) con
         && layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
-#if ! JucePlugin_IsSynth
+        // This checks if the input layout matches the output layout
+#if !JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
 #endif
@@ -202,23 +202,21 @@ bool RotorAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) con
 void RotorAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     // write new wavetable if pulse width changes
-    if (previousPulseWidth != *pulseWidth)
-    {
+    if (previousPulseWidth != *pulseWidth) {
         previousPulseWidth = *pulseWidth;
-        setWavetable((int) *modulationShape);
+        setWavetable((int)*modulationShape);
     }
 
     // write new wavetable if waveform selection change
-    if (previousShape != *modulationShape)
-    {
+    if (previousShape != *modulationShape) {
         previousShape = *modulationShape;
-        setWavetable((int) *modulationShape);
+        setWavetable((int)*modulationShape);
     }
     // update phase delta for wavetable
-    setPhaseDelta((double) *modulationRate, this->getSampleRate());
+    setPhaseDelta((double)*modulationRate, this->getSampleRate());
 
     // update inversion factor
-    modulationInversionFactor = getModulationInversion((bool) *modulationIsInverted);
+    modulationInversionFactor = getModulationInversion((bool)*modulationIsInverted);
 
     // grab reference to the editor (for the analyzer)
     RotorAudioProcessorEditor* editor = static_cast<RotorAudioProcessorEditor*>(getActiveEditor());
@@ -227,10 +225,8 @@ void RotorAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& m
     if (editor)
         editor->preAnalyzer->pushBuffer(buffer);
 
-    for (auto channel = 0; channel < buffer.getNumChannels(); channel++)
-    {
-        for (auto sample = 0; sample < buffer.getNumSamples(); sample++)
-        {
+    for (auto channel = 0; channel < buffer.getNumChannels(); channel++) {
+        for (auto sample = 0; sample < buffer.getNumSamples(); sample++) {
             // set current phase to previous block's last sample value (for continuity)
             currentPhase = previousPhase;
 
@@ -241,7 +237,7 @@ void RotorAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& m
             auto o_sampleData = samples[sample], p_sampleData = samples[sample];
 
             // multiply wavetable value by original signal and update phase value
-            p_sampleData *= (wavetable[(int) currentPhase] * modulationInversionFactor);
+            p_sampleData *= (wavetable[(int)currentPhase] * modulationInversionFactor);
             currentPhase = fmod(currentPhase + phaseDelta, wavetableSize);
 
             // read current mix ratio value and scale between 0.0f and 1.0f (** DOES NOT CHECK IF MIX IS > 100.0f **)
@@ -270,12 +266,9 @@ void RotorAudioProcessor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& m
 
     // get current output gain and update if needed then apply it
     auto currentGain = powf(2, *level / 6);
-    if (previousLevel == currentGain)
-    {
+    if (previousLevel == currentGain) {
         buffer.applyGain(currentGain);
-    }
-    else
-    {
+    } else {
         buffer.applyGainRamp(0, buffer.getNumSamples(), previousLevel, currentGain);
         previousLevel = currentGain;
     }
@@ -306,10 +299,8 @@ void RotorAudioProcessor::getStateInformation(MemoryBlock& destData)
 void RotorAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-    if (xmlState.get() != nullptr)
-    {
-        if (xmlState->hasTagName(parameters.state.getType()))
-        {
+    if (xmlState.get() != nullptr) {
+        if (xmlState->hasTagName(parameters.state.getType())) {
             parameters.replaceState(ValueTree::fromXml(*xmlState));
         }
     }
@@ -343,7 +334,7 @@ float RotorAudioProcessor::getModulationInversion(bool inverted)
 void RotorAudioProcessor::setPhaseDelta(double frequency, double sampleRate)
 {
     auto cyclesPerSample = frequency / sampleRate;
-    phaseDelta = cyclesPerSample * (double) wavetableSize;
+    phaseDelta = cyclesPerSample * (double)wavetableSize;
 }
 
 // writes wavetable according to currently selected waveform
@@ -352,63 +343,55 @@ void RotorAudioProcessor::setWavetable(int waveformIndex)
     // clear the wavetable
     wavetable.clear();
 
-    // set pulse width 
+    // set pulse width
     int pulseWidthSize = *pulseWidth * wavetableSize;
 
     // check values and compute accordingly
-    switch (waveformIndex)
-    {
-        // SINE
-        default:
-        case 0:
-            for (int i = 0; i < wavetableSize; i++)
-            {
-                auto waveformValue = sinf(MathConstants<float>::twoPi * (float) i / wavetableSize);
-                wavetable.insert(i, waveformValue);
-            }
-            break;
+    switch (waveformIndex) {
+    // SINE
+    default:
+    case 0:
+        for (int i = 0; i < wavetableSize; i++) {
+            auto waveformValue = sinf(MathConstants<float>::twoPi * (float)i / wavetableSize);
+            wavetable.insert(i, waveformValue);
+        }
+        break;
 
-        // TRIANGLE
-        case 1:
-            for (int i = 0; i < wavetableSize / 2; i++)
-            {
-                float waveformValue = 2.0f * ((float) i / (wavetableSize / 2)) - 1.0f;
-                wavetable.insert(i, waveformValue);
-            }
-            for (int i = wavetableSize / 2; i < wavetableSize; i++)
-            {
-                wavetable.insert(i, wavetable[-1 * (i + 1)]);
-            }
-            break;
+    // TRIANGLE
+    case 1:
+        for (int i = 0; i < wavetableSize / 2; i++) {
+            float waveformValue = 2.0f * ((float)i / (wavetableSize / 2)) - 1.0f;
+            wavetable.insert(i, waveformValue);
+        }
+        for (int i = wavetableSize / 2; i < wavetableSize; i++) {
+            wavetable.insert(i, wavetable[-1 * (i + 1)]);
+        }
+        break;
 
-        // SAWTOOTH
-        case 2:
-            for (int i = 0; i < wavetableSize; i++)
-            {
-                float waveformValue = 2.0f * ((float) i / wavetableSize) - 1.0f;
-                wavetable.insert(i, waveformValue);
-            }
-            break;
+    // SAWTOOTH
+    case 2:
+        for (int i = 0; i < wavetableSize; i++) {
+            float waveformValue = 2.0f * ((float)i / wavetableSize) - 1.0f;
+            wavetable.insert(i, waveformValue);
+        }
+        break;
 
-        // SQUARE
-        case 3:
-            for (int i = 0; i < pulseWidthSize; i++)
-            {
-                wavetable.insert(i, 1.0f);
-            }
-            for (int i = pulseWidthSize; i < wavetableSize; i++)
-            {
-                wavetable.insert(i, -1.0f);
-            }
-            break;
+    // SQUARE
+    case 3:
+        for (int i = 0; i < pulseWidthSize; i++) {
+            wavetable.insert(i, 1.0f);
+        }
+        for (int i = pulseWidthSize; i < wavetableSize; i++) {
+            wavetable.insert(i, -1.0f);
+        }
+        break;
 
-        // SEMI-SINE
-        case 4:
-            for (int i = 0; i < wavetableSize; i++)
-            {
-                auto waveformValue = sinf(MathConstants<float>::pi * (float) i / wavetableSize);
-                wavetable.insert(i, waveformValue);
-            }
-            break;
+    // SEMI-SINE
+    case 4:
+        for (int i = 0; i < wavetableSize; i++) {
+            auto waveformValue = sinf(MathConstants<float>::pi * (float)i / wavetableSize);
+            wavetable.insert(i, waveformValue);
+        }
+        break;
     }
 }

@@ -12,8 +12,8 @@
 
 //==============================================================================
 RotorAnalyzer::RotorAnalyzer()
-    : forwardFFT(FFTOrder),
-      window(FFTSize, dsp::WindowingFunction<float>::hann)
+    : forwardFFT(FFTOrder)
+    , window(FFTSize, dsp::WindowingFunction<float>::hann)
 {
     zeromem(outputData, sizeof(outputData));
     setSize(240, 360);
@@ -26,11 +26,11 @@ RotorAnalyzer::~RotorAnalyzer()
 }
 
 //==============================================================================
-void RotorAnalyzer::paint (Graphics& g)
+void RotorAnalyzer::paint(Graphics& g)
 {
     // get dimensions
-    const float width = (float) getWidth();
-    const float height = (float) getHeight();
+    const float width = (float)getWidth();
+    const float height = (float)getHeight();
 
     // clear all drawing
     g.setColour(Colours::transparentBlack);
@@ -38,18 +38,17 @@ void RotorAnalyzer::paint (Graphics& g)
 
     // get range and then set scale accordingly
     Range<float> maxRange = FloatVectorOperations::findMinAndMax(outputData, outputSize);
-    const float scale = 1.0f / jmax((float) FFTSize, maxRange.getEnd());
+    const float scale = 1.0f / jmax((float)FFTSize, maxRange.getEnd());
 
     g.setColour(fillStart);
-    for (int i = 0; i < outputSize; i++)
-    {
+    for (int i = 0; i < outputSize; i++) {
         float x = std::log10(1 + 39 * ((i + 1.0f) / outputSize)) / std::log10(40.0f) * width;
-        
+
         const float magnitude = outputData[i] * scale;
         const float decibels = Decibels::gainToDecibels(magnitude);
         const float y = jmap(decibels, -90.0f, -15.0f, height, 0.0f);
 
-        g.drawVerticalLine((int) x, y, height);
+        g.drawVerticalLine((int)x, y, height);
     }
 }
 
@@ -59,15 +58,14 @@ void RotorAnalyzer::resized()
 
 void RotorAnalyzer::timerCallback()
 {
-    if (nextFFTBlockReady)
-    {
+    if (nextFFTBlockReady) {
         window.multiplyWithWindowingTable(FFTData, FFTSize);
         forwardFFT.performFrequencyOnlyForwardTransform(FFTData);
 
         // copy frequency bins into output data buffer using with
         // max(outputData[i], FFTData[i]). After the FFT calculation
         // on array A of size N, A[N / 2, N) is filled with zeros, and
-        // A[0, N/4) is a mirror of A[N/4, N/2). Hence we only copy 
+        // A[0, N/4) is a mirror of A[N/4, N/2). Hence we only copy
         // FFTSize / 2 samples into the output data.
         FloatVectorOperations::max(outputData, outputData, FFTData, outputSize);
 
@@ -82,10 +80,9 @@ void RotorAnalyzer::timerCallback()
 }
 
 //==============================================================================
-void RotorAnalyzer::pushBuffer(AudioSampleBuffer& buffer) 
+void RotorAnalyzer::pushBuffer(AudioSampleBuffer& buffer)
 {
-    if (buffer.getNumChannels() > 0)
-    {
+    if (buffer.getNumChannels() > 0) {
         const auto* channelData = buffer.getReadPointer(0);
 
         for (int i = 0; i < buffer.getNumSamples(); i++)
@@ -96,11 +93,9 @@ void RotorAnalyzer::pushBuffer(AudioSampleBuffer& buffer)
 inline void RotorAnalyzer::pushNextSample(float sample)
 {
     // if current index is at the end of array
-    if (FFTQueueIndex == FFTSize)
-    {
+    if (FFTQueueIndex == FFTSize) {
         // check that the block is done, fill with data from queue if not done
-        if (!nextFFTBlockReady)
-        {
+        if (!nextFFTBlockReady) {
             zeromem(FFTData, sizeof(FFTData));
             memcpy(FFTData, FFTQueue, sizeof(FFTQueue));
             nextFFTBlockReady = true;

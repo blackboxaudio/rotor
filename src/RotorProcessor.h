@@ -12,8 +12,7 @@
 //==============================================================================
 /**
 */
-class RotorAudioProcessor : public AudioProcessor
-{
+class RotorAudioProcessor : public AudioProcessor {
 public:
     //==============================================================================
     RotorAudioProcessor();
@@ -52,7 +51,6 @@ public:
     void getStateInformation(MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
-   
     float getSkewFactor(float start, float end, float center);
     float getModulationInversion(bool inverted);
     void setPhaseDelta(double frequency, double sampleRate);
@@ -66,13 +64,13 @@ private:
     //==========================================================================
 
     // declare value tree state parameters - atomic<float>* is THREAD SAFE
-    std::atomic<float>* modulationShape;             
-    std::atomic<float>* modulationRate;              
-    std::atomic<float>* modulationNoise;             
-    std::atomic<float>* modulationIsInverted;        
-    std::atomic<float>* pulseWidth;                  
-    std::atomic<float>* level;                       
-    std::atomic<float>* mix;  
+    std::atomic<float>* modulationShape;
+    std::atomic<float>* modulationRate;
+    std::atomic<float>* modulationNoise;
+    std::atomic<float>* modulationIsInverted;
+    std::atomic<float>* pulseWidth;
+    std::atomic<float>* level;
+    std::atomic<float>* mix;
 
     // previous values for specific parameters
     float previousShape;

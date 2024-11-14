@@ -16,8 +16,7 @@
 /*
 */
 class RotorAnalyzer : public Component,
-                      private Timer
-{
+                      private Timer {
 public:
     RotorAnalyzer();
     ~RotorAnalyzer();
@@ -33,23 +32,21 @@ public:
     void setColours(Colour stroke, Colour fillStart, Colour fillStop);
 
     //==========================================================================
-    enum
-    {
+    enum {
         FFTOrder = 11,
-        FFTSize = 1 << FFTOrder,            // 2048
-        outputSize = FFTSize / 2            // 1024
+        FFTSize = 1 << FFTOrder, // 2048
+        outputSize = FFTSize / 2 // 1024
     };
 
 private:
-
     dsp::FFT forwardFFT;
     dsp::WindowingFunction<float> window;
 
-    float FFTQueue[FFTSize];            // contains incoming audio data in samples
-    float FFTData[2 * FFTSize];         // contains results of FFT calculations
-    float outputData[outputSize];       
+    float FFTQueue[FFTSize]; // contains incoming audio data in samples
+    float FFTData[2 * FFTSize]; // contains results of FFT calculations
+    float outputData[outputSize];
 
-    unsigned int FFTQueueIndex = 0;     // keeps count of amount of samples in queue
+    unsigned int FFTQueueIndex = 0; // keeps count of amount of samples in queue
     bool nextFFTBlockReady = false;
 
     Colour fillStart = Colours::white.withAlpha(0.2f);
