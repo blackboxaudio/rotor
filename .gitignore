@@ -14,6 +14,7 @@ bin/
 out/
 **/build
 **/dmg
+**/*.dmg
 
 project/Backup/
 project/Samples/
