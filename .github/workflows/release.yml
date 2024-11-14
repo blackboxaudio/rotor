@@ -59,12 +59,19 @@ jobs:
           7z x pluginval_macOS.zip
           pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
 
-      - name: Import Certificates (MacOS)
+      - name: Import App Certificates (MacOS)
         uses: apple-actions/import-codesign-certs@v3
         if: ${{ matrix.os == 'macos-13' }}
         with:
           p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
           p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
+
+      - name: Import Installer Certificates (MacOS)
+        uses: apple-actions/import-codesign-certs@v3
+        if: ${{ matrix.os == 'macos-13' }}
+        with:
+          p12-file-base64: ${{ secrets.DEVELOPER_ID_INSTALLER_CERT }}
+          p12-password: ${{ secrets.DEVELOPER_ID_INSTALLER_PASSWORD }}
 
       - name: Sign Binaries (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
@@ -91,7 +98,8 @@ jobs:
       - name: Sign Installer (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
         run: |
-          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "packaging/build/${{ env.PLUGIN_NAME }}.pkg" --deep --strict --timestamp
+          mkdir -p packaging/build/signed
+          productsign -s "${{ secrets.DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ env.PLUGIN_NAME }}.pkg" "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
 
       - name: Package Installer (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
@@ -100,7 +108,7 @@ jobs:
           python3 -m pip install setuptools --break-system-packages
           npm install -g appdmg
           mkdir -p packaging/dmg
-          mv packaging/build/${{ env.PLUGIN_NAME }}.pkg packaging/dmg
+          mv packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg packaging/dmg
           
           # Create the .dmg
           cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
