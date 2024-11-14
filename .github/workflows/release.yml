@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ 'macos-14' ]
+        os: [ 'macos-13' ]
     env:
       BUILD_TYPE: Release
       PLUGIN_NAME: Rotor
@@ -27,7 +27,7 @@ jobs:
 
       - name: Import Certificates (MacOS)
         uses: apple-actions/import-codesign-certs@v3
-        if: ${{ matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-13' }}
         with:
           p12-file-base64: ${{ secrets.DEVELOPER_ID_APP_CERT }}
           p12-password: ${{ secrets.DEVELOPER_ID_APP_PASSWORD }}
@@ -46,7 +46,7 @@ jobs:
 
       - name: Configure Rotor
         working-directory: ${{ runner.workspace }}/rotor
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build Rotor
         working-directory: ${{ runner.workspace }}/rotor
@@ -61,13 +61,13 @@ jobs:
           echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
 
       - name: Sign Binaries (MacOS)
-        if: ${{ matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-13' }}
         run: |
           codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
           codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
 
       - name: Package Binaries (MacOS)
-        if: ${{ matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-13' }}
         run: |
           # Setup tools and directories
           python3 -m pip install setuptools --break-system-packages
@@ -88,7 +88,7 @@ jobs:
           xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
 
       - name: Upload DMG (MacOS)
-        if: ${{ matrix.os == 'macos-14' }}
+        if: ${{ matrix.os == 'macos-13' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}.dmg
