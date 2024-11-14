@@ -22,6 +22,7 @@ jobs:
         runs-on: ${{ inputs.os }}
         env:
             BUILD_TYPE: ${{ inputs.build_type }}
+            PLUGIN_NAME: Rotor
         steps:
             -   name: Checkout Repo
                 uses: actions/checkout@v4
@@ -51,13 +52,14 @@ jobs:
 
             -   name: Build Rotor
                 working-directory: ${{ runner.workspace }}/rotor
-                run: cmake --build bin --config ${{ inputs.build_type }} --target Rotor_All --parallel 8
+                run: cmake --build bin --config ${{ inputs.build_type }} --target ${{ env.PLUGIN_NAME }}_All --parallel 8
 
             - name: Set Environment Variables
               run: |
                   ARTIFACTS_PATH=bin/Rotor_artefacts/${{ inputs.build_type }}
                   echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
                   echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+                  echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ runner.os }}" >> $GITHUB_ENV
 
             - name: Pluginval (MacOS)
               if: ${{ runner.os == 'macOS' }}
@@ -74,10 +76,10 @@ jobs:
                   mv ${{ env.AU_PATH }} dist
 
             - name: Upload AU & VST3 (MacOS)
-              if: ${{ inputs.upload_artifacts && runner.os == 'macos-13' }}
+              if: ${{ inputs.upload_artifacts && runner.os == 'macOS' }}
               uses: actions/upload-artifact@v4
               with:
-                  name: Rotor-macOS
+                  name: ${{ env.ARTIFACT_NAME }}
                   path: dist/*
 
             - name: Pluginval (Windows)
@@ -90,5 +92,5 @@ jobs:
                 if: ${{ inputs.upload_artifacts && runner.os == 'Windows' }}
                 uses: actions/upload-artifact@v4
                 with:
-                    name: Rotor-Windows
+                    name: ${{ env.ARTIFACT_NAME }}
                     path: ${{ env.VST3_PATH }}/Contents/x86_64-win/Rotor.vst3
