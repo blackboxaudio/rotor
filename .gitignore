@@ -12,6 +12,7 @@ juce/
 # Binaries and executables
 bin/
 out/
+**/build
 
 project/Backup/
 project/Samples/

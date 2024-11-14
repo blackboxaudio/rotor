@@ -72,24 +72,38 @@ jobs:
           codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
           codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
 
-      - name: Package Binaries (MacOS)
+      - name: Download Packages (MacOS)
+        if: ${{ matrix.os == 'macos-13' }}
+        run: wget http://s.sudre.free.fr/Software/files/Packages.dmg
+
+      - name: Mount Packages (MacOS)
+        if: ${{ matrix.os == 'macos-13' }}
+        run: hdiutil attach Packages.dmg
+
+      - name: Install Packages (MacOS)
+        if: ${{ matrix.os == 'macos-13' }}
+        run: sudo installer -pkg /Volumes/Packages\ 1.2.9/Install\ Packages.pkg -target /
+
+      - name: Build Installer (MacOS)
+        if: ${{ matrix.os == 'macos-13' }}
+        run: packagesbuild packaging/Rotor.pkgproj
+
+      - name: Sign Installer (MacOS)
+        if: ${{ matrix.os == 'macos-13' }}
+        run: |
+          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.BUNDLE_ID }} --force "packaging/build/${{ env.PLUGIN_NAME }}.pkg"
+
+      - name: Package Installer (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
         run: |
           # Setup tools and directories
           python3 -m pip install setuptools --break-system-packages
           npm install -g appdmg
           mkdir -p packaging/dmg
-          
-          # Create DMG symlink directories
-          sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/Components && sudo mkdir -m 755 -p /Library/Audio/Plug-Ins/VST3
-          ln -s /Library/Audio/Plug-Ins/VST3 "packaging/dmg/Your Mac's VST3 Folder"
-          ln -s /Library/Audio/Plug-Ins/Components "packaging/dmg/Your Mac's Component Folder"
-          mv "${{ env.VST3_PATH }}" packaging/dmg
-          mv "${{ env.AU_PATH }}" packaging/dmg
+          mv packaging/build/${{ env.PLUGIN_NAME }}.pkg packaging/dmg
           
           # Create the .dmg
           cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
-          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.BUNDLE_ID }} --force "${{ env.ARTIFACT_NAME }}.dmg"
           xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
           xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
 

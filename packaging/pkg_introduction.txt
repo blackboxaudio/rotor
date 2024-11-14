@@ -1,0 +1,5 @@
+Hello 👋
+
+Thank you for choosing Rotor, your new go to tool for dynamic ring modulation effects. 
+
+Simply follow the installer steps, and you'll be ready to start modulating!
