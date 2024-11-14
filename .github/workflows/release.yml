@@ -4,11 +4,17 @@ on: workflow_dispatch
 
 jobs:
   Test:
-    name: ${{ matrix.os }} Release Build
+    name: ${{ matrix.name }} Release Build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ 'macos-13' ]
+        include:
+          - name: macOS
+            os: macos-14
+            pluginval-bin: pluginval.app/Contents/MacOS/pluginval
+#          - name: Windows
+#            os: windows-2022
+#            pluginval-bin: ./pluginval.exe
     env:
       BUILD_TYPE: Release
       PLUGIN_NAME: Rotor
@@ -55,19 +61,19 @@ jobs:
 
       - name: Pluginval
         run: |
-          curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_macOS.zip"
-          7z x pluginval_macOS.zip
-          pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
+          curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_${{ matrix.name }}.zip"
+          7z x pluginval_${{ matrix.name }}.zip
+          ${{ matrix.pluginval-bin }} --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"
 
       - name: Import Certificates (MacOS)
         uses: apple-actions/import-codesign-certs@v3
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         with:
           p12-file-base64: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS }}
           p12-password: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS_PASSWORD }}
 
       - name: Sign Binaries (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         run: |
           codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
           codesign --verify --deep --strict --verbose=2 "${{ env.VST3_PATH }}"
@@ -75,30 +81,30 @@ jobs:
           codesign --verify --deep --strict --verbose=2 "${{ env.AU_PATH }}"
 
       - name: Download Packages (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         run: wget http://s.sudre.free.fr/Software/files/Packages.dmg
 
       - name: Mount Packages (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         run: hdiutil attach Packages.dmg
 
       - name: Install Packages (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         run: sudo installer -pkg /Volumes/Packages\ 1.2.10/Install\ Packages.pkg -target /
 
       - name: Build Installer (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         run: packagesbuild packaging/Rotor.pkgproj
 
       - name: Sign Installer (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         run: |
           mkdir -p packaging/build/signed
           productsign -s "${{ secrets.DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ env.PLUGIN_NAME }}.pkg" "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
           pkgutil --check-signature "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
 
       - name: Package Installer (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         run: |
           # Setup tools and directories
           python3 -m pip install setuptools --break-system-packages
@@ -113,7 +119,7 @@ jobs:
           xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
 
       - name: Upload DMG (MacOS)
-        if: ${{ matrix.os == 'macos-13' }}
+        if: ${{ matrix.name == 'macOS' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
