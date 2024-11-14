@@ -45,8 +45,8 @@ jobs:
         include:
           - name: macOS
             os: macos-13
-          - name: Windows
-            os: windows-2022
+#          - name: Windows
+#            os: windows-2022
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
@@ -59,6 +59,7 @@ jobs:
           name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
 
       - name: Set Environment Variables
+        shell: bash
         run: |
           ARTIFACTS_PATH=${{ env.PLUGIN_NAME }}-${{ matrix.name }}
           echo "VST3_PATH=${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
