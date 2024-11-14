@@ -60,10 +60,25 @@ jobs:
                   echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
 
             - name: Pluginval (MacOS)
+              if: ${{ runner.os == 'macOS' }}
               run: |
                   curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_macOS.zip"
                   7z x pluginval_macOS.zip
                   pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"          
+
+            - name: Move Binaries (MacOS)
+              if: ${{ inputs.upload_artifacts && runner.os == 'macOS' }}
+              run: |
+                  mkdir -p dist && \
+                  mv ${{ env.VST3_PATH }} dist && \
+                  mv ${{ env.AU_PATH }} dist
+
+            - name: Upload AU & VST3 (MacOS)
+              if: ${{ inputs.upload_artifacts && runner.os == 'macos-13' }}
+              uses: actions/upload-artifact@v4
+              with:
+                  name: Rotor-macOS
+                  path: dist/*
 
             - name: Pluginval (Windows)
               run: |
@@ -72,22 +87,8 @@ jobs:
                   ./pluginval.exe --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}/Contents/x86_64-win/Rotor.vst3"
 
             -   name: Upload VST3 (Windows)
-                if: ${{ inputs.upload_artifacts && inputs.os == 'windows-2022' }}
+                if: ${{ inputs.upload_artifacts && runner.os == 'Windows' }}
                 uses: actions/upload-artifact@v4
                 with:
                     name: Rotor-Windows
                     path: ${{ env.VST3_PATH }}/Contents/x86_64-win/Rotor.vst3
-
-            - name: Move Binaries (MacOS)
-              if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
-              run: |
-                  mkdir -p dist && \
-                  mv ${{ env.VST3_PATH }} dist && \
-                  mv ${{ env.AU_PATH }} dist
-
-            - name: Upload AU & VST3 (MacOS)
-              if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
-              uses: actions/upload-artifact@v4
-              with:
-                  name: Rotor-macOS
-                  path: dist/*

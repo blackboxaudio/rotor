@@ -43,6 +43,11 @@ jobs:
         with:
           name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
 
+      - name: Delete Artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
+
       - name: Set Environment Variables
         run: |
           ARTIFACTS_PATH=${{ env.PLUGIN_NAME }}-${{ matrix.name }}
