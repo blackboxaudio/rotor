@@ -2,9 +2,14 @@ name: Release
 
 on: workflow_dispatch
 
+env:
+  BUILD_TYPE: Release
+  PLUGIN_NAME: Rotor
+  BUNDLE_ID: com.bbx-audio.rotor
+  VERSION: 1.0.0
+
 jobs:
   Build:
-    name: Build Release (${{ matrix.name }})
     uses: ./.github/workflows/build.reusable.yml
     strategy:
       fail-fast: false
@@ -20,7 +25,6 @@ jobs:
       upload_artifacts: ${{ true }}
 
   Package:
-    name: Package (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
     needs: [Build]
     strategy:
@@ -33,20 +37,11 @@ jobs:
     #          - name: Windows
     #            os: windows-2022
     #            pluginval-bin: ./pluginval.exe
-    env:
-      BUILD_TYPE: Release
-      PLUGIN_NAME: Rotor
-      BUNDLE_ID: com.bbx-audio.rotor
-      VERSION: 1.0.0
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
-
-      - name: Unzip Artifacts
-        run: |
-          7z x ${{ env.PLUGIN_NAME }}-${{ matrix.name }}.zip
 
       - name: Set Environment Variables
         run: |
@@ -120,3 +115,18 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: packaging/${{ env.ARTIFACT_NAME }}.dmg
+
+  Release:
+    if: startsWith(github.event.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    needs: [Package]
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Draft Release
+        uses: softprops/actions-gh-release@v2
+        with:
+          prerelease: true
+          files: |
+            */*.dmg
