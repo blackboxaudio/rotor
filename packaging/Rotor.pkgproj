@@ -82,7 +82,7 @@
 																	<key>GID</key>
 																	<integer>0</integer>
 																	<key>PATH</key>
-																	<string>../bin/Rotor_artefacts/Release/VST3/Rotor.vst3</string>
+																	<string>../Rotor.vst3</string>
 																	<key>PATH_TYPE</key>
 																	<integer>1</integer>
 																	<key>PERMISSIONS</key>
@@ -667,7 +667,7 @@
 																	<key>GID</key>
 																	<integer>0</integer>
 																	<key>PATH</key>
-																	<string>../bin/Rotor_artefacts/Release/AU/Rotor.component</string>
+																	<string>../Rotor.component</string>
 																	<key>PATH_TYPE</key>
 																	<integer>1</integer>
 																	<key>PERMISSIONS</key>
