@@ -18,8 +18,8 @@ jobs:
         include:
           - name: macOS
             os: macos-13
-    #          - name: Windows
-    #            os: windows-2022
+          - name: Windows
+            os: windows-2022
     with:
       os: ${{ matrix.os }}
       build_type: Release
@@ -43,13 +43,15 @@ jobs:
         with:
           name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
 
-      - name: Delete Artifacts
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
+#      - name: Delete Artifacts
+#        uses: geekyeggo/delete-artifact@v5
+#        with:
+#          name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
 
       - name: Set Environment Variables
         run: |
+          ls
+          ls ${{ env.PLUGIN_NAME }}-${{ matrix.name }} || echo "No dir"
           ARTIFACTS_PATH=${{ env.PLUGIN_NAME }}-${{ matrix.name }}
           echo "VST3_PATH=$ARTIFACTS_PATH/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=$ARTIFACTS_PATH/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
@@ -126,6 +128,6 @@ jobs:
       - name: Draft Release
         uses: softprops/actions-gh-release@v2
         with:
-          prerelease: true
+          prerelease: false
           files: |
             */*.dmg

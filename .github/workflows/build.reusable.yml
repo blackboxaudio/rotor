@@ -56,7 +56,7 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          ARTIFACTS_PATH=bin/Rotor_artefacts/${{ inputs.build_type }}
+          echo "ARTIFACTS_PATH=bin/Rotor_artefacts/${{ inputs.build_type }}" >> $GITHUB_ENV
           echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ runner.os }}" >> $GITHUB_ENV
@@ -71,8 +71,8 @@ jobs:
       - name: Move Binaries (MacOS)
         if: ${{ inputs.upload_artifacts && runner.os == 'macOS' }}
         run: |
-          mkdir -p dist && \
-          mv ${{ env.VST3_PATH }} dist && \
+          mkdir -p dist
+          mv ${{ env.VST3_PATH }} dist
           mv ${{ env.AU_PATH }} dist
 
       - name: Upload AU & VST3 (MacOS)
@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: dist/*
+          path: dist
 
       - name: Pluginval (Windows)
         if: ${{ runner.os == 'Windows' }}
