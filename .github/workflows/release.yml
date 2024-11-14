@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   Test:
-    name: ${{ runner.os }} Release Build
+    name: ${{ matrix.os }} Release Build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
