@@ -14,6 +14,7 @@ jobs:
       PLUGIN_NAME: Rotor
       BUNDLE_ID: com.bbx-audio.rotor
       VERSION: 1.0.0
+      OS_ARCHITECTURE: x86_64
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -34,7 +35,7 @@ jobs:
 
       - name: Configure JUCE
         working-directory: ${{ runner.workspace }}/rotor/JUCE
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES=x86_64
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES=${{ env.OS_ARCHITECTURE }}
 
       - name: Build JUCE
         working-directory: ${{ runner.workspace }}/rotor/JUCE
@@ -46,7 +47,7 @@ jobs:
 
       - name: Configure Rotor
         working-directory: ${{ runner.workspace }}/rotor
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES=x86_64
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_OSX_ARCHITECTURES=${{ env.OS_ARCHITECTURE }}
 
       - name: Build Rotor
         working-directory: ${{ runner.workspace }}/rotor
@@ -58,7 +59,7 @@ jobs:
           echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
           echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.VERSION }} (${{ runner.os }}-${{ env.OS_ARCHITECTURE }})" >> $GITHUB_ENV
 
       - name: Pluginval
         run: |
@@ -82,7 +83,7 @@ jobs:
 
       - name: Install Packages (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
-        run: sudo installer -pkg /Volumes/Packages\ 1.2.9/Install\ Packages.pkg -target /
+        run: sudo installer -pkg /Volumes/Packages\ 1.2.10/Install\ Packages.pkg -target /
 
       - name: Build Installer (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
