@@ -69,12 +69,9 @@ jobs:
       - name: Sign Binaries (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
         run: |
-          # Sign
           codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
-          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
-          
-          # Verify
           codesign --verify --deep --strict --verbose=2 "${{ env.VST3_PATH }}"
+          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
           codesign --verify --deep --strict --verbose=2 "${{ env.AU_PATH }}"
 
       - name: Download Packages (MacOS)
@@ -96,11 +93,8 @@ jobs:
       - name: Sign Installer (MacOS)
         if: ${{ matrix.os == 'macos-13' }}
         run: |
-          # Sign
           mkdir -p packaging/build/signed
           productsign -s "${{ secrets.DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ env.PLUGIN_NAME }}.pkg" "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
-          
-          # Verify
           pkgutil --check-signature "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
 
       - name: Package Installer (MacOS)
