@@ -53,19 +53,37 @@ jobs:
                 working-directory: ${{ runner.workspace }}/rotor
                 run: cmake --build bin --config ${{ inputs.build_type }} --target Rotor_All --parallel 8
 
+            - name: Set Environment Variables
+              run: |
+                  ARTIFACTS_PATH=bin/Rotor_artefacts/${{ inputs.build_type }}
+                  echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+                  echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+
+            - name: Pluginval (MacOS)
+              run: |
+                  curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_macOS.zip"
+                  7z x pluginval_macOS.zip
+                  pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}"          
+
+            - name: Pluginval (Windows)
+              run: |
+                  curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_Windows.zip"
+                  7z x pluginval_Windows.zip
+                  ./pluginval.exe --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}/Contents/x86_64-win/Rotor.vst3"
+
             -   name: Upload VST3 (Windows)
                 if: ${{ inputs.upload_artifacts && inputs.os == 'windows-2022' }}
                 uses: actions/upload-artifact@v4
                 with:
                     name: Rotor-Windows
-                    path: bin/Rotor_artefacts/${{ inputs.build_type }}/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3
+                    path: ${{ env.VST3_PATH }}/Contents/x86_64-win/Rotor.vst3
 
             - name: Move Binaries (MacOS)
               if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
               run: |
                   mkdir -p dist && \
-                  mv bin/Rotor_artefacts/${{ inputs.build_type }}/VST3/Rotor.vst3 dist && \
-                  mv bin/Rotor_artefacts/${{ inputs.build_type }}/AU/Rotor.component dist
+                  mv ${{ env.VST3_PATH }} dist && \
+                  mv ${{ env.AU_PATH }} dist
 
             - name: Upload AU & VST3 (MacOS)
               if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
