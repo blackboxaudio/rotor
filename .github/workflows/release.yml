@@ -3,60 +3,56 @@ name: Release
 on: workflow_dispatch
 
 jobs:
-  Test:
-    name: ${{ matrix.name }} Release Build
-    runs-on: ${{ matrix.os }}
+  Build:
+    name: Build Release (${{ matrix.name }})
+    uses: ./.github/workflows/build.reusable.yml
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: macOS
-            os: macos-14
+            os: macos-13
+          - name: Windows
+            os: windows-2022
+    with:
+      os: ${{ matrix.os }}
+      build_type: Release
+      upload_artifacts: ${{ true }}
+
+  Package:
+    name: Package (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    needs: [Build]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS
+            os: macos-13
             pluginval-bin: pluginval.app/Contents/MacOS/pluginval
-#          - name: Windows
-#            os: windows-2022
-#            pluginval-bin: ./pluginval.exe
+    #          - name: Windows
+    #            os: windows-2022
+    #            pluginval-bin: ./pluginval.exe
     env:
       BUILD_TYPE: Release
       PLUGIN_NAME: Rotor
       BUNDLE_ID: com.bbx-audio.rotor
       VERSION: 1.0.0
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Clone JUCE
-        uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
         with:
-          repository: juce-framework/JUCE
-          ref: 2f980209cc4091a4490bb1bafc5d530f16834e58
-          path: ${{ runner.workspace }}/rotor/JUCE
+          name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
 
-      - name: Configure JUCE
-        working-directory: ${{ runner.workspace }}/rotor/JUCE
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
-
-      - name: Build JUCE
-        working-directory: ${{ runner.workspace }}/rotor/JUCE
-        run: cmake --build bin --config ${{ env.BUILD_TYPE }} --parallel 8
-
-      - name: Precompile Rotor
-        working-directory: ${{ runner.workspace }}/rotor
-        run: ./scripts/precompile.sh
-
-      - name: Configure Rotor
-        working-directory: ${{ runner.workspace }}/rotor
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
-
-      - name: Build Rotor
-        working-directory: ${{ runner.workspace }}/rotor
-        run: cmake --build bin --config ${{ env.BUILD_TYPE }} --target ${{ env.PLUGIN_NAME }}_All --parallel 8
+      - name: Unzip Artifacts
+        run: |
+          7z x ${{ env.PLUGIN_NAME }}-${{ matrix.name }}.zip
 
       - name: Set Environment Variables
         run: |
-          ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ env.BUILD_TYPE }}
-          echo "ARTIFACTS_PATH=$ARTIFACTS_PATH" >> $GITHUB_ENV
-          echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
-          echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+          ARTIFACTS_PATH=${{ env.PLUGIN_NAME }}-${{ matrix.name }}
+          echo "VST3_PATH=$ARTIFACTS_PATH/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+          echo "AU_PATH=$ARTIFACTS_PATH/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.VERSION }} (${{ runner.os }})" >> $GITHUB_ENV
 
       - name: Pluginval

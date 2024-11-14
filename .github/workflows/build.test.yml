@@ -1,4 +1,4 @@
-name: Build
+name: Build (Test)
 
 on:
     workflow_dispatch:
@@ -13,10 +13,9 @@ on:
                     - Debug
 
 jobs:
-    Trigger:
-        name: Trigger ${{ inputs.os }} ${{ inputs.build_type }} Builds
+    Build:
+        name: Build ${{ inputs.build_type }} (${{ inputs.os }})
         uses: ./.github/workflows/build.reusable.yml
-        if: ${{ always() }}
         strategy:
             fail-fast: true
             matrix:

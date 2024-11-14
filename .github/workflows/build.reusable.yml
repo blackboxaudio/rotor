@@ -33,16 +33,14 @@ jobs:
                     ref: 2f980209cc4091a4490bb1bafc5d530f16834e58
                     path: ${{ runner.workspace }}/rotor/JUCE
 
-            # JUCE
             -   name: Configure JUCE
                 working-directory: ${{ runner.workspace }}/rotor/JUCE
                 run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ inputs.build_type }}
 
             -   name: Build JUCE
                 working-directory: ${{ runner.workspace }}/rotor/JUCE
-                run: cmake --build bin --parallel 4
+                run: cmake --build bin --parallel 8
 
-            # Rotor
             -   name: Precompile Rotor
                 working-directory: ${{ runner.workspace }}/rotor
                 run: chmod +x ./scripts/precompile.sh && ./scripts/precompile.sh
@@ -53,17 +51,15 @@ jobs:
 
             -   name: Build Rotor
                 working-directory: ${{ runner.workspace }}/rotor
-                run: cmake --build bin --config ${{ inputs.build_type }} --target Rotor_All --parallel 4
+                run: cmake --build bin --config ${{ inputs.build_type }} --target Rotor_All --parallel 8
 
-            # Upload (Windows)
             -   name: Upload VST3 (Windows)
                 if: ${{ inputs.upload_artifacts && inputs.os == 'windows-2022' }}
                 uses: actions/upload-artifact@v4
                 with:
-                    name: rotor-windows
+                    name: Rotor-Windows
                     path: bin/Rotor_artefacts/${{ inputs.build_type }}/VST3/Rotor.vst3/Contents/x86_64-win/Rotor.vst3
 
-            # Upload (MacOS)
             - name: Move Binaries (MacOS)
               if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
               run: |
@@ -75,5 +71,5 @@ jobs:
               if: ${{ inputs.upload_artifacts && inputs.os == 'macos-13' || inputs.os == 'macos-13-xlarge' }}
               uses: actions/upload-artifact@v4
               with:
-                  name: rotor-macos
+                  name: Rotor-macOS
                   path: dist/*
