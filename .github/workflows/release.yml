@@ -28,8 +28,8 @@ jobs:
         include:
           - name: macOS
             os: macos-13
-          - name: Windows
-            os: windows-2022
+#          - name: Windows
+#            os: windows-2022
     with:
       os: ${{ matrix.os }}
       build_type: Release

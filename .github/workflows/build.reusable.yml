@@ -54,14 +54,11 @@ jobs:
         working-directory: ${{ runner.workspace }}/rotor
         run: cmake --build bin --config ${{ inputs.build_type }} --target ${{ env.PLUGIN_NAME }}_All --parallel 8
 
-      - name: Set Environment Variables (1/2)
+      - name: Set Environment Variables
         run: |
-          echo "ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ inputs.build_type }}" >> $GITHUB_ENV
-
-      - name: Set Environment Variables (2/2)
-        run: |
-          echo "VST3_PATH=${{ env.ARTIFACTS_PATH }}/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
-          echo "AU_PATH=${{ env.ARTIFACTS_PATH }}/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+          ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ inputs.build_type }}
+          echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+          echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ runner.os }}" >> $GITHUB_ENV
 
       - name: Pluginval (MacOS)
