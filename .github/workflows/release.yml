@@ -1,6 +1,16 @@
 name: Release
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: Target plugin build stage
+        required: true
+        type: choice
+        default: production
+        options:
+          - production
+          - beta
 
 env:
   BUILD_TYPE: Release
@@ -18,8 +28,8 @@ jobs:
         include:
           - name: macOS
             os: macos-13
-          - name: Windows
-            os: windows-2022
+#          - name: Windows
+#            os: windows-2022
     with:
       os: ${{ matrix.os }}
       build_type: Release
@@ -128,6 +138,6 @@ jobs:
       - name: Draft Release
         uses: softprops/actions-gh-release@v2
         with:
-          prerelease: false
+          prerelease: ${{ inputs.stage != 'production' }}
           files: |
             */*.dmg
