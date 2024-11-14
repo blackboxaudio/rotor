@@ -21,7 +21,7 @@ namespace RotorData
     const int            louisgeorgecafe_ttfSize = 32020;
 
     extern const char*   background_png;
-    const int            background_pngSize = 106576;
+    const int            background_pngSize = 112304;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 5;

@@ -67,7 +67,7 @@ if [ ! -d "./juce/build" ]; then
     echo -e "\n[Success] Configured JUCE build!\n"
 
     echo -e "Building JUCE...\n"
-    cmake --build bin
+    cmake --build bin --parallel 8
     echo -e "\n[Success] Built JUCE libraries and targets!\n"
 
     cd ../
@@ -83,7 +83,7 @@ cmake -B bin . -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 echo -e "\n[Success] Configured plugin build!\n"
 
 echo -e "Building ${PLUGIN_NAME}...\n"
-cmake --build bin --config ${BUILD_TYPE} --target "${PLUGIN_NAME}_All" --parallel 4
+cmake --build bin --config ${BUILD_TYPE} --target "${PLUGIN_NAME}_All" --parallel 8
 echo -e "\n[Success] Built plugin executable(s)!\n"
 
 if [ ! -z ${DAW_TO_OPEN} ]; then

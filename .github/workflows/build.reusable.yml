@@ -27,7 +27,7 @@ jobs:
                 uses: actions/checkout@v4
 
             -   name: Clone JUCE
-                uses: actions/checkout@v2
+                uses: actions/checkout@v4
                 with:
                     repository: juce-framework/JUCE
                     ref: 2f980209cc4091a4490bb1bafc5d530f16834e58
