@@ -18,8 +18,8 @@ jobs:
         include:
           - name: macOS
             os: macos-13
-#          - name: Windows
-#            os: windows-2022
+    #          - name: Windows
+    #            os: windows-2022
     with:
       os: ${{ matrix.os }}
       build_type: Release
@@ -28,15 +28,15 @@ jobs:
   Package:
     name: Package (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
-    needs: [Build]
+    needs: [ Build ]
     strategy:
       fail-fast: false
       matrix:
         include:
           - name: macOS
             os: macos-13
-#          - name: Windows
-#            os: windows-2022
+    #          - name: Windows
+    #            os: windows-2022
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
@@ -118,7 +118,7 @@ jobs:
   Release:
     if: startsWith(github.event.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
-    needs: [Package]
+    needs: [ Package ]
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4

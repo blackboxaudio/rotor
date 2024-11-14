@@ -1,26 +1,26 @@
 name: Build (Test)
 
 on:
-    workflow_dispatch:
-        inputs:
-            build_type:
-                description: Target plugin build environment
-                required: true
-                type: choice
-                default: Release
-                options:
-                    - Release
-                    - Debug
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: Target plugin build environment
+        required: true
+        type: choice
+        default: Release
+        options:
+          - Release
+          - Debug
 
 jobs:
-    Build:
-        name: Build ${{ inputs.build_type }} (${{ inputs.os }})
-        uses: ./.github/workflows/build.reusable.yml
-        strategy:
-            fail-fast: true
-            matrix:
-                os: ['macos-13', 'windows-2022']
-        with:
-            os: ${{ matrix.os }}
-            build_type: ${{ inputs.build_type }}
-            upload_artifacts: ${{ true }}
+  Build:
+    name: Build ${{ inputs.build_type }} (${{ inputs.os }})
+    uses: ./.github/workflows/build.reusable.yml
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ 'macos-13', 'windows-2022' ]
+    with:
+      os: ${{ matrix.os }}
+      build_type: ${{ inputs.build_type }}
+      upload_artifacts: ${{ true }}
