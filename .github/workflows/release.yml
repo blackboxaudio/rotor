@@ -45,8 +45,8 @@ jobs:
         include:
           - name: macOS
             os: macos-13
-#          - name: Windows
-#            os: windows-2022
+          - name: Windows
+            os: windows-2022
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
