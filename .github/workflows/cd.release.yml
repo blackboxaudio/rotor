@@ -107,6 +107,9 @@ jobs:
           destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
           predefinedAcl: publicRead
           process_gcloudignore: false
+          env_vars: |
+            MACOS_ARTIFACT_NAME=${{ env.MACOS_ARTIFACT_NAME }}
+            STAGE=${{ env.STAGE }}
 
       - name: Prepare Body
         run: |
