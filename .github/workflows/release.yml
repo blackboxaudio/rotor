@@ -17,6 +17,10 @@ on:
           - production
           - beta
 
+defaults:
+  run:
+    shell: bash
+
 env:
   BUILD_TYPE: Release
   PLUGIN_NAME: Rotor
@@ -67,7 +71,6 @@ jobs:
           name: ${{ env.PLUGIN_NAME }}-${{ matrix.name }}
 
       - name: Set Environment Variables
-        shell: bash
         run: |
           ARTIFACTS_PATH=${{ env.PLUGIN_NAME }}-${{ matrix.name }}
           echo "VST3_PATH=${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
@@ -143,8 +146,8 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Set Environment Variables
-        shell: bash
         run: |
+          ls
           VERSION=${GITHUB_REF#refs/tags/v}
           STAGE_INFO=$(echo "$VERSION" | perl -0777 -pe 's/^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([a-z]+)(?:\.([0-9]+))?)?$/\1 \2 \3 \4 \5/')
           
@@ -179,13 +182,13 @@ jobs:
       - name: Upload to Google Cloud Storage
         uses: google-github-actions/upload-cloud-storage@v2
         with:
+          process_gcloudignore: false
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
           path: "./"
           glob: "*.dmg"
           destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
 
       - name: Prepare Body
-        shell: bash
         run: |
           touch CHANGELOG.md
           echo "### Changelog" >> CHANGELOG.md
