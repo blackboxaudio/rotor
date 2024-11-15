@@ -6,16 +6,6 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - 'v[0-9]+.[0-9]+.[0-9]+-[a-z]+'
       - 'v[0-9]+.[0-9]+.[0-9]+-[a-z]+.[0-9]+'
-  workflow_dispatch:
-    inputs:
-      stage:
-        description: Target plugin build stage
-        required: true
-        type: choice
-        default: production
-        options:
-          - production
-          - beta
 
 defaults:
   run:
@@ -28,10 +18,14 @@ env:
 
 jobs:
   Build:
-    name: Build Release (${{ inputs.os }})
+    name: Build Release (${{ matrix.os }})
     uses: ./.github/workflows/build.reusable.yml
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ 'macos-13' , 'windows-2022' ]
     with:
-      os: ${{ inputs.os }}
+      os: ${{ matrix.os }}
       build_type: Release
       upload_artifacts: ${{ true }}
 
