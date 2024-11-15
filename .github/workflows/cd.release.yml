@@ -39,7 +39,7 @@ jobs:
     with:
       os: ${{ matrix.os }}
       plugin_name: Rotor
-      plugin_version: 1.0.0
+      plugin_version: 1.0.0-alpha.1
       plugin_bundle_id: com.bbx-audio.rotor
     secrets: inherit
 
@@ -51,7 +51,7 @@ jobs:
       id-token: write
     env:
       PLUGIN_NAME: Rotor
-      PLUGIN_VERSION: 1.0.0
+      PLUGIN_VERSION: 1.0.0-alpha.1
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
