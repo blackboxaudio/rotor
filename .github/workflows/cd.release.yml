@@ -90,7 +90,10 @@ jobs:
 
       - name: Check Tag & Version
         run: |
-          if [[ ! $PLUGIN_VERSION == *"$VERSION"* ]] || [[ ! $PLUGIN_VERSION == *"$STAGE"* ]]; then
+          echo $PLUGIN_VERSION
+          echo $VERSION
+          echo $STAGE
+          if [[ $PLUGIN_VERSION != *"$VERSION"* ]] || [[ $PLUGIN_VERSION != *"$STAGE"* ]]; then
             echo "The specific plugin version and tag-derived version do not match. Exiting."
             exit 1
           fi
