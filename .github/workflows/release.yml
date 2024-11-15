@@ -138,7 +138,7 @@ jobs:
         uses: actions/download-artifact@v4
 
       - name: Draft Release
-        uses: softprops/actions-gh-release@v2
+        uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ inputs.stage != 'production' }}
           files: |

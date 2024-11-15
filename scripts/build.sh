@@ -13,8 +13,6 @@ BUILD_TYPE=Debug
 COMPANY_NAME="Black Box Audio"
 PLUGIN_NAME=Rotor
 
-JUCE_CODE_COMMIT=2f980209cc4091a4490bb1bafc5d530f16834e58
-
 for i in "$@"; do
     case $i in
     -c|--copy)
@@ -42,36 +40,22 @@ done
 
 if [ ${REMOVE_PREV_BUILD} = true ]; then
     rm -rf ./bin
-    rm -rf ./juce/bin
     echo -e "[Success] Removed previous build's folders!\n"
 fi
 
-if [ ! -d "./juce" ]; then
-    git clone https://github.com/juce-framework/JUCE.git
-    mv JUCE/ juce/
-
-    cd ./juce
-
-    git checkout "$JUCE_CODE_COMMIT"
-
-    cd ../
-
-    echo -e "\n[Success] Cloned JUCE repository\n"
-fi
-
-if [ ! -d "./juce/build" ]; then
-    cd ./juce
-
-    echo -e "Configuring JUCE...\n"
-    cmake -B bin . -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
-    echo -e "\n[Success] Configured JUCE build!\n"
-
-    echo -e "Building JUCE...\n"
-    cmake --build bin --parallel 8
-    echo -e "\n[Success] Built JUCE libraries and targets!\n"
-
-    cd ../
-fi
+#if [ ! -d "./vendor/juce/build" ]; then
+#    cd ./vendor/juce
+#
+#    echo -e "Configuring JUCE...\n"
+#    cmake -B bin . -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
+#    echo -e "\n[Success] Configured JUCE build!\n"
+#
+#    echo -e "Building JUCE...\n"
+#    cmake --build bin --parallel 8
+#    echo -e "\n[Success] Built JUCE libraries and targets!\n"
+#
+#    cd ../../
+#fi
 
 if [ ${PRECOMPILE_STEP} = true ]; then
     scripts/precompile.sh -b=${BUILD_TYPE}
