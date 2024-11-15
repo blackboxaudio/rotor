@@ -28,26 +28,26 @@ env:
   BUNDLE_ID: com.bbx-audio.rotor
 
 jobs:
-  Build:
-    name: Build Release (${{ matrix.name }})
-    uses: ./.github/workflows/build.reusable.yml
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - name: macOS
-            os: macos-13
-          - name: Windows
-            os: windows-2022
-    with:
-      os: ${{ matrix.os }}
-      build_type: Release
-      upload_artifacts: ${{ true }}
+#  Build:
+#    name: Build Release (${{ matrix.name }})
+#    uses: ./.github/workflows/build.reusable.yml
+#    strategy:
+#      fail-fast: true
+#      matrix:
+#        include:
+#          - name: macOS
+#            os: macos-13
+#          - name: Windows
+#            os: windows-2022
+#    with:
+#      os: ${{ matrix.os }}
+#      build_type: Release
+#      upload_artifacts: ${{ true }}
 
   Package:
     name: Package (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
-    needs: [ Build ]
+#    needs: [ Build ]
     strategy:
       fail-fast: false
       matrix:
