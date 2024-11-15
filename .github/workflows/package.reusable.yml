@@ -18,17 +18,8 @@ defaults:
     shell: bash
 
 jobs:
-  Build:
-    name: Build Release (${{ inputs.os }})
-    uses: ./.github/workflows/build.reusable.yml
-    with:
-      os: ${{ inputs.os }}
-      build_type: Release
-      upload_artifacts: ${{ true }}
-
   Package:
     runs-on: ${{ inputs.os }}
-    needs: [ Build ]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

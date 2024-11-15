@@ -27,6 +27,14 @@ env:
   BUNDLE_ID: com.bbx-audio.rotor
 
 jobs:
+  Build:
+    name: Build Release (${{ inputs.os }})
+    uses: ./.github/workflows/build.reusable.yml
+    with:
+      os: ${{ inputs.os }}
+      build_type: Release
+      upload_artifacts: ${{ true }}
+
   Package:
     name: Package (${{ matrix.name }})
     uses: ./.github/workflows/package.reusable.yml
