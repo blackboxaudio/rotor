@@ -21,7 +21,7 @@ jobs:
 
       - name: Get Git Branch
         run: |
-          BRANCH=$(git branch -r --contains $GITHUB_SHA | grep "origin/" | sed 's|origin/||' | grep -v HEAD | head -n 1)
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
           echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
       - name: Verify Branches
