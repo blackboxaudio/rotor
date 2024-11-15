@@ -152,7 +152,7 @@ jobs:
       - name: Set Environment Variables
         run: |
           ls
-          ls "${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (${{ runner.os }})"
+          ls "${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (macOS)"
           VERSION=${GITHUB_REF#refs/tags/v}
           STAGE_INFO=$(echo "$VERSION" | perl -0777 -pe 's/^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([a-z]+)(?:\.([0-9]+))?)?$/\1 \2 \3 \4 \5/')
           
