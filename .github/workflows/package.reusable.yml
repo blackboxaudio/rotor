@@ -86,6 +86,7 @@ jobs:
           python3 -m pip install setuptools --break-system-packages
           npm install -g appdmg
           mkdir -p packaging/dmg
+          mv packaging/README.pdf packaging/dmg
           mv packaging/build/signed/${{ inputs.plugin_name }}.pkg packaging/dmg
 
           # Create the .dmg

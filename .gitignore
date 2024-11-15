@@ -21,3 +21,6 @@ project/Samples/
 project/Desktop.ini
 
 **/cmake-build-debug
+
+# Google Cloud stuff
+gha-creds-*.json

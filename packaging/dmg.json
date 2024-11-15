@@ -1,17 +1,19 @@
 {
     "title": "Rotor",
+    "background": "background.png",
     "window": {
         "position": {
             "x": 100,
             "y": 100
         },
         "size": {
-            "width": 720,
-            "height": 480
+            "width": 480,
+            "height": 320
         }
     },
     "format": "UDZO",
     "contents": [
-        { "x": 320, "y": 180, "type": "file", "path": "dmg/Rotor.pkg" }
+        { "x": 160, "y": 170, "type": "file", "path": "dmg/Rotor.pkg" },
+        { "x": 320, "y": 170, "type": "file", "path": "dmg/README.pdf" }
     ]
 }
