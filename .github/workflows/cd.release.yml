@@ -14,7 +14,6 @@ defaults:
 env:
   PLUGIN_NAME: Rotor
   PLUGIN_VERSION: 1.0.0-beta.1
-  BUNDLE_ID: com.bbx-audio.rotor
 
 jobs:
   Build:
@@ -45,6 +44,7 @@ jobs:
       os: ${{ matrix.os }}
       plugin_name: Rotor
       plugin_version: 1.0.0-beta.1
+      plugin_bundle_id: com.bbx-audio.rotor
     secrets: inherit
 
   Release:
@@ -64,7 +64,7 @@ jobs:
       - name: Set Environment Variables
         run: |
           ls
-          ls "${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (macOS)"
+          ls "$PLUGIN_NAME v$PLUGIN_VERSION (macOS)"
           VERSION=${GITHUB_REF#refs/tags/v}
           STAGE_INFO=$(echo "$VERSION" | perl -0777 -pe 's/^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([a-z]+)(?:\.([0-9]+))?)?$/\1 \2 \3 \4 \5/')
 
@@ -75,13 +75,13 @@ jobs:
           STAGE_VERSION=$(echo "$STAGE_INFO" | awk '{print $5}')
 
           if [ -z "$STAGE" ]; then
-            RELEASE_NAME="${{ env.PLUGIN_NAME }} v$MAJOR.$MINOR.$PATCH"
+            RELEASE_NAME="$PLUGIN_NAME v$MAJOR.$MINOR.$PATCH"
             STAGE=production
           else
             if [ -z "$STAGE_VERSION" ]; then
               STAGE_VERSION=1
             fi
-            RELEASE_NAME="${{ env.PLUGIN_NAME }} v$MAJOR.$MINOR.$PATCH-$STAGE.$STAGE_VERSION"
+            RELEASE_NAME="$PLUGIN_NAME v$MAJOR.$MINOR.$PATCH-$STAGE.$STAGE_VERSION"
           fi
 
           echo "VERSION=$MAJOR.$MINOR.$PATCH" >> $GITHUB_ENV
@@ -89,8 +89,8 @@ jobs:
           echo "STAGE_VERSION=$STAGE_VERSION" >> $GITHUB_ENV
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
 
-          echo "WINDOWS_ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (Windows)" >> $GITHUB_ENV
-          echo "MACOS_ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (macOS)" >> $GITHUB_ENV
+          echo "WINDOWS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (Windows)" >> $GITHUB_ENV
+          echo "MACOS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (macOS)" >> $GITHUB_ENV
 
       - name: Authenticate Google Cloud
         uses: google-github-actions/auth@v2
@@ -103,7 +103,7 @@ jobs:
         uses: google-github-actions/upload-cloud-storage@v2
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          path: "${{ env.MACOS_ARTIFACT_NAME }}"
+          path: ${{ env.MACOS_ARTIFACT_NAME }}
           glob: "*.{dmg}"
           destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
           predefinedAcl: publicRead
