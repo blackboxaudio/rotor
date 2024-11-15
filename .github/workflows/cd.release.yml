@@ -114,7 +114,7 @@ jobs:
 
       - name: Upload to Cloud Storage
         run: |
-          gcloud storage cp "**/*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
+          gcloud storage cp "**/*.{dmg,exe}" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
 
       - name: Prepare Body
         run: |
