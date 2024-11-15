@@ -136,8 +136,10 @@ jobs:
         if: ${{ matrix.name == 'macOS' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: packaging/${{ env.ARTIFACT_NAME }}.dmg
+          name: ${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (${{ runner.os }})
+          path: packaging/${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (${{ runner.os }}).dmg
+#          name: ${{ env.ARTIFACT_NAME }}
+#          path: packaging/${{ env.ARTIFACT_NAME }}.dmg
 
   Release:
     if: startsWith(github.event.ref, 'refs/tags/v')
