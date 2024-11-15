@@ -11,10 +11,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  PLUGIN_NAME: Rotor
-  PLUGIN_VERSION: 1.0.0-beta.1
-
 jobs:
   Build:
     name: Build Release (${{ matrix.os }})
@@ -54,6 +50,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      PLUGIN_NAME: Rotor
+      PLUGIN_VERSION: 1.0.0-beta.1
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -103,23 +102,22 @@ jobs:
         uses: google-github-actions/upload-cloud-storage@v2
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          path: $MACOS_ARTIFACT_NAME
-          glob: "*.{dmg}"
-          destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/$STAGE"
+          path: ${{ env.MACOS_ARTIFACT_NAME }}
+          glob: "**/*.{dmg}"
+          destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
           predefinedAcl: publicRead
           process_gcloudignore: false
 
       - name: Prepare Body
         run: |
-          touch CHANGELOG.md
           echo "### Changelog" >> CHANGELOG.md
           echo "------" >> CHANGELOG.md
 
       - name: Draft Release
         uses: softprops/action-gh-release@v2
         with:
-          name: $RELEASE_NAME
-          prerelease: ${{ '$STAGE' != 'production' }}
+          name: ${{ env.RELEASE_NAME }}
+          prerelease: ${{ env.STAGE != 'production' }}
           draft: true
           body_path: ./CHANGELOG.md
           files: |
