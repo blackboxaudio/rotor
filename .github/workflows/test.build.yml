@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ 'macos-14', 'windows-2022' ]
+        os: [ 'macos-13', 'windows-2022' ]
     with:
       os: ${{ matrix.os }}
       build_type: ${{ inputs.build_type }}
