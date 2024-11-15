@@ -91,12 +91,12 @@ jobs:
       - name: Check Tag & Version
         run: |
           if [[ ! $PLUGIN_VERSION =~ $VERSION ]]; then
-            echo "The specific plugin version and tag-derived version do not match. Exiting."
+            echo "The plugin version specified in this workflow and tag-derived version do not match. Exiting."
             exit 1
           fi
           
           if [[ $PLUGIN_VERSION != "production" ]] && [[ ! $PLUGIN_VERSION =~ $STAGE ]]; then
-            echo "The specific plugin version stage and tag-derived version stage do not match. Exiting."
+            echo "The plugin version stage specified in this workflow and tag-derived version stage do not match. Exiting."
             exit 1
           fi
 
