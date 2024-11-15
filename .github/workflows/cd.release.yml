@@ -62,8 +62,6 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          ls
-          ls "$PLUGIN_NAME v$PLUGIN_VERSION (macOS)"
           VERSION=${GITHUB_REF#refs/tags/v}
           STAGE_INFO=$(echo "$VERSION" | perl -0777 -pe 's/^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([a-z]+)(?:\.([0-9]+))?)?$/\1 \2 \3 \4 \5/')
 
@@ -102,14 +100,11 @@ jobs:
         uses: google-github-actions/upload-cloud-storage@v2
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          path: ${{ env.MACOS_ARTIFACT_NAME }}
+          path: "${{ env.MACOS_ARTIFACT_NAME }}"
           glob: "**/*.{dmg}"
           destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
           predefinedAcl: publicRead
           process_gcloudignore: false
-          env_vars: |
-            MACOS_ARTIFACT_NAME=${{ env.MACOS_ARTIFACT_NAME }}
-            STAGE=${{ env.STAGE }}
 
       - name: Prepare Body
         run: |
