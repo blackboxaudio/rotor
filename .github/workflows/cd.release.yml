@@ -106,8 +106,26 @@ jobs:
 
       - name: Prepare Body
         run: |
-          echo "### Changelog" >> CHANGELOG.md
-          echo "------" >> CHANGELOG.md
+          echo "### Overview" >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "New $PLUGIN_NAME release! 🚀" >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "Download the plugin installers below and have fun!" >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "------" >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "### Changelog" >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "**Added**:" >> RELEASE.md
+          echo "- ..." >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "**Changed**:" >> RELEASE.md
+          echo "- ..." >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "**Removed**:" >> RELEASE.md
+          echo "- ..." >> RELEASE.md
+          echo "" >> RELEASE.md
+          echo "**Full Changelog**: https://github.com/blackboxaudio/rotor/compare/vX.Y.Z...v$PLUGIN_VERSION" >> RELEASE.md
 
       - name: Draft Release
         uses: softprops/action-gh-release@v2
@@ -115,6 +133,6 @@ jobs:
           name: ${{ env.RELEASE_NAME }}
           prerelease: ${{ env.STAGE != 'production' }}
           draft: true
-          body_path: ./CHANGELOG.md
+          body_path: ./RELEASE.md
           files: |
             *.dmg
