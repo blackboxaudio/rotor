@@ -26,7 +26,7 @@ jobs:
     name: Build Release (${{ matrix.name }})
     uses: ./.github/workflows/build.reusable.yml
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - name: macOS
