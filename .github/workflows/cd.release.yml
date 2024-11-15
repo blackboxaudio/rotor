@@ -12,9 +12,28 @@ defaults:
     shell: bash
 
 jobs:
+  Verify:
+    name: Verify Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Get Git Branch
+        run: |
+          BRANCH=$(git branch -r --contains $GITHUB_SHA | grep "origin/" | sed 's|origin/||' | grep -v HEAD | head -n 1)
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+
+      - name: Verify Branches
+        if: ${{ env.BRANCH != 'main' && env.BRANCH != 'develop' }}
+        run: |
+          echo "Tag was not pushed from the 'main' nor 'develop' branches. Exiting.
+          exit 1
+
   Build:
     name: Build Release (${{ matrix.os }})
     uses: ./.github/workflows/reusable.build.yml
+    needs: [ Verify ]
     if:
       contains('
         refs/heads/develop
