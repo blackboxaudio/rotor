@@ -37,7 +37,7 @@ jobs:
             os: windows-2022
     with:
       os: ${{ matrix.os }}
-      build_type: ${{ env.BUILD_TYPE }}
+      build_type: Release
       upload_artifacts: ${{ true }}
 
   Package:
