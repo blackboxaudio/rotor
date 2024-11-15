@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.15)
 project(Rotor VERSION 1.0.0)
 
 # Declare dependency on JUCE (as installed on the local system)
-add_subdirectory(juce)
+add_subdirectory(vendor/juce)
 
 juce_add_plugin(Rotor
         VERSION "1.0.0"
