@@ -120,7 +120,11 @@ jobs:
         run: |
           echo "### Overview" >> RELEASE.md
           echo "" >> RELEASE.md
-          echo "New $PLUGIN_NAME release! 🚀" >> RELEASE.md
+          if [[ $STAGE == "production" ]]; then
+            echo "New $PLUGIN_NAME release! 🚀" >> RELEASE.md
+          else
+            echo "New $PLUGIN_NAME $STAGE (no. $STAGE_VERSION) release! 🚀" >> RELEASE.md
+          fi
           echo "" >> RELEASE.md
           echo "Download the plugin installers below and have fun!" >> RELEASE.md
           echo "" >> RELEASE.md
