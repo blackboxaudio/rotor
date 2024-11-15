@@ -89,16 +89,31 @@ jobs:
           echo "WINDOWS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (Windows)" >> $GITHUB_ENV
           echo "MACOS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (macOS)" >> $GITHUB_ENV
 
+      - name: Authenticate Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+          service_account: ${{ secrets.GOOGLE_CLOUD_SERVICE_ACCOUNT }}
+          credentials_json: ${{ secrets.GOOGLE_CLOUD_AUTH_JSON }}
+
       - name: Setup Google Cloud
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key: ${{ secrets.GOOGLE_CLOUD_AUTH_JSON }}
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          export_default_credentials: true
 
       - name: Upload to Cloud Storage
         run: |
-          gsutil -m rsync -R "${{ env.MACOS_ARTIFACT_NAME }}/${{ env.MACOS_ARTIFACT_NAME }}.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
+          gcloud storage cp "**/*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
+
+      - name: Upload to Google Cloud Storage (MacOS)
+        uses: google-github-actions/upload-cloud-storage@v2
+        with:
+          project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
+          path: "${{ env.MACOS_ARTIFACT_NAME }}"
+          glob: "**/*.{dmg}"
+          destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
+          predefinedAcl: publicRead
+          process_gcloudignore: false
 
       - name: Prepare Body
         run: |
