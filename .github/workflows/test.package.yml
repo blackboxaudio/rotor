@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'macos-13' , 'windows-2022' ]
+        os: [ 'macos-14' , 'windows-2022' ]
     with:
       os: ${{ matrix.os }}
       build_type: Release
@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'macos-13' , 'windows-2022' ]
+        os: [ 'macos-14' , 'windows-2022' ]
     with:
       os: ${{ matrix.os }}
       plugin_name: Rotor
