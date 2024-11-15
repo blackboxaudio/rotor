@@ -124,7 +124,7 @@ jobs:
           mkdir -p packaging/dmg
 
           # Test
-          ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (${{ runner.os }})
+          ARTIFACT_NAME="${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (${{ runner.os }})"
           echo "Hello, world!" >> "$ARTIFACT_NAME.dmg"
 #
 #          # Create the .dmg
