@@ -88,6 +88,13 @@ jobs:
           echo "WINDOWS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (Windows)" >> $GITHUB_ENV
           echo "MACOS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (macOS)" >> $GITHUB_ENV
 
+      - name: Check Tag & Version
+        run: |
+          if [[ ! $PLUGIN_VERSION =~ $VERSION ]] || [[ ! $PLUGIN_VERSION =~ $STAGE ]]; then
+            echo "The specific plugin version and tag-dervied version do not match. Exiting."
+            exit 1
+          fi
+
       - name: Authenticate Google Cloud
         uses: google-github-actions/auth@v2
         with:
