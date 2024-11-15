@@ -2,13 +2,13 @@
 cmake_minimum_required(VERSION 3.15)
 
 # Declaring targets and describing source/ binary directories
-project(Rotor VERSION "1.0.0-beta.1")
+project(Rotor VERSION 1.0.0)
 
 # Declare dependency on JUCE (as installed on the local system)
 add_subdirectory(vendor/juce)
 
 juce_add_plugin(Rotor
-        VERSION "1.0.0-beta.1"
+        VERSION "1.0.0"
         COMPANY_NAME "Black Box Audio"
         COMPANY_WEBSITE "https://bbx-audio.com"
         IS_SYNTH FALSE
