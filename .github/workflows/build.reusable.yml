@@ -29,11 +29,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Precompile
-        working-directory: ${{ runner.workspace }}/rotor
-        shell: bash
-        run: ./scripts/precompile.sh
-
       - name: Configure
         working-directory: ${{ runner.workspace }}/rotor
         run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ inputs.build_type }}
