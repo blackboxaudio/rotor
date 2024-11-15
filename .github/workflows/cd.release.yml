@@ -34,11 +34,6 @@ jobs:
     name: Build Release (${{ matrix.os }})
     uses: ./.github/workflows/reusable.build.yml
     needs: [ Verify ]
-    if:
-      contains('
-        refs/heads/develop
-        refs/heads/main
-      ', github.ref)
     strategy:
       fail-fast: true
       matrix:
@@ -51,11 +46,6 @@ jobs:
   Package:
     name: Package Build (${{ matrix.os }})
     uses: ./.github/workflows/reusable.package.yml
-    if:
-      contains('
-        refs/heads/develop
-        refs/heads/main
-      ', github.ref)
     needs: [ Build ]
     strategy:
       fail-fast: false
@@ -73,7 +63,6 @@ jobs:
     secrets: inherit
 
   Release:
-    if: startsWith(github.event.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     needs: [ Package ]
     permissions:
