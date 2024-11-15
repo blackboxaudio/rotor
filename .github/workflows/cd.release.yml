@@ -85,8 +85,8 @@ jobs:
           echo "STAGE_VERSION=$STAGE_VERSION" >> $GITHUB_ENV
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
 
-          echo "WINDOWS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (Windows)" >> $GITHUB_ENV
-          echo "MACOS_ARTIFACT_NAME=$PLUGIN_NAME v$PLUGIN_VERSION (macOS)" >> $GITHUB_ENV
+          echo "WINDOWS_ARTIFACT_NAME=$PLUGIN_NAME-$PLUGIN_VERSION-Windows" >> $GITHUB_ENV
+          echo "MACOS_ARTIFACT_NAME=$PLUGIN_NAME-$PLUGIN_VERSION-macOS" >> $GITHUB_ENV
 
       - name: Check Tag & Version
         run: |

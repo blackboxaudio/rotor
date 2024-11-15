@@ -22,7 +22,7 @@ defaults:
 
 jobs:
   Package:
-    name: Package ${{ inputs.plugin_name }} v${{ inputs.plugin_version }} (${{ inputs.os }})
+    name: Package ${{ inputs.plugin_name }}-${{ inputs.plugin_version }}-${{ inputs.os }}
     runs-on: ${{ inputs.os }}
     steps:
       - name: Checkout Repository
@@ -42,7 +42,7 @@ jobs:
         run: |
           echo "VST3_PATH=${{ inputs.plugin_name }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=${{ inputs.plugin_name }}.component" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=${{ inputs.plugin_name }} v${{ inputs.plugin_version }} (${{ runner.os }})" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ inputs.plugin_name }}-${{ inputs.plugin_version }}-${{ runner.os }}" >> $GITHUB_ENV
 
       - name: Import Certificates (MacOS)
         uses: apple-actions/import-codesign-certs@v3
