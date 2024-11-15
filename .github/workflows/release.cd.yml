@@ -45,6 +45,7 @@ jobs:
       os: ${{ matrix.os }}
       plugin_name: Rotor
       plugin_version: 1.0.0-beta.2
+    secrets: inherit
 
   Release:
     if: startsWith(github.event.ref, 'refs/tags/v')
