@@ -131,7 +131,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         run: |
           iscc "packaging\${{ inputs.plugin_name }}.iss"
-          mv "packaging/Output/${{ env.ARTIFACT_NAME }}.exe" ""
+          mv "packaging\Output\${{ env.ARTIFACT_NAME }}.exe" .
 
       - name: Upload Installer (Windows)
         if: ${{ runner.os == 'Windows' }}
