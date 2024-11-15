@@ -122,7 +122,6 @@ jobs:
           python3 -m pip install setuptools --break-system-packages
           npm install -g appdmg
           mkdir -p packaging/dmg
-#          mv packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg packaging/dmg
 
           # Test
           ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (${{ runner.os }})
