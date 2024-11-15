@@ -125,7 +125,7 @@ jobs:
 
           # Test
           ARTIFACT_NAME="${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (${{ runner.os }})"
-          echo "Hello, world!" >> "$ARTIFACT_NAME.dmg"
+          echo "Hello, world!" >> "packaging/$ARTIFACT_NAME.dmg"
 #
 #          # Create the .dmg
 #          cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
