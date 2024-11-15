@@ -1,0 +1,7 @@
+# Ignore everything
+/[!.]*
+/.?*
+
+# Except artifacts / builds
+!**/*.dmg
+!**/*.zip
