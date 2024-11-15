@@ -158,6 +158,9 @@ jobs:
             RELEASE_NAME="${{ env.PLUGIN_NAME }} v$MAJOR.$MINOR.$PATCH"
             STAGE=production
           else
+            if [ -z "$STAGE_VERSION" ]; then
+              STAGE_VERSION=1
+            fi
             RELEASE_NAME="${{ env.PLUGIN_NAME }} v$MAJOR.$MINOR.$PATCH-$STAGE.$STAGE_VERSION"
           fi
 
