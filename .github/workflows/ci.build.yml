@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   Build:
-    name: Build ${{ inputs.build_type }} (${{ inputs.os }})
+    name: Build (${{ matrix.os }})
     uses: ./.github/workflows/reusable.build.yml
     strategy:
       fail-fast: true
