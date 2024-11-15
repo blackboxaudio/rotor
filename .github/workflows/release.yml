@@ -122,6 +122,7 @@ jobs:
           python3 -m pip install setuptools --break-system-packages
           npm install -g appdmg
           mkdir -p packaging/dmg
+          mv packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg packaging/dmg
 
           # Create the .dmg
           cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
