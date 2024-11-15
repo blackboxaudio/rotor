@@ -1,0 +1,111 @@
+name: Package (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+      plugin_name:
+        required: true
+        type: string
+      plugin_version:
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  Build:
+    name: Build Release (${{ inputs.os }})
+    uses: ./.github/workflows/build.reusable.yml
+    with:
+      os: ${{ inputs.os }}
+      build_type: Release
+      upload_artifacts: ${{ true }}
+
+  Package:
+    runs-on: ${{ inputs.os }}
+    needs: [ Build ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.plugin_name }}-${{ runner.os }}
+
+      - name: Delete Artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: ${{ inputs.plugin_name }}-${{ runner.os }}
+
+      - name: Set Environment Variables
+        run: |
+          ARTIFACTS_PATH=${{ inputs.plugin_name }}-${{ runner.os }}
+          echo "VST3_PATH=${{ inputs.plugin_name }}.vst3" >> $GITHUB_ENV
+          echo "AU_PATH=${{ inputs.plugin_name }}.component" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ inputs.plugin_name }} v${{ inputs.plugin_version }} (${{ runner.os }})" >> $GITHUB_ENV
+
+      - name: Import Certificates (MacOS)
+        uses: apple-actions/import-codesign-certs@v3
+        if: ${{ runner.os == 'macOS' }}
+        with:
+          p12-file-base64: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS }}
+          p12-password: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS_PASSWORD }}
+
+      - name: Sign Binaries (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: |
+          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
+          codesign --verify --deep --strict --verbose=2 "${{ env.VST3_PATH }}"
+          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
+          codesign --verify --deep --strict --verbose=2 "${{ env.AU_PATH }}"
+
+      - name: Download Packages (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: wget http://s.sudre.free.fr/Software/files/Packages.dmg
+
+      - name: Mount Packages (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: hdiutil attach Packages.dmg
+
+      - name: Install Packages (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: sudo installer -pkg /Volumes/Packages\ 1.2.10/Install\ Packages.pkg -target /
+
+      - name: Build Installer (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: packagesbuild packaging/Rotor.pkgproj
+
+      - name: Sign Installer (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: |
+          mkdir -p packaging/build/signed
+          productsign -s "${{ secrets.DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ inputs.plugin_name }}.pkg" "packaging/build/signed/${{ inputs.plugin_name }}.pkg"
+          pkgutil --check-signature "packaging/build/signed/${{ inputs.plugin_name }}.pkg"
+
+      - name: Package Installer (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        run: |
+          # Setup tools and directories
+          python3 -m pip install setuptools --break-system-packages
+          npm install -g appdmg
+          mkdir -p packaging/dmg
+          mv packaging/build/signed/${{ inputs.plugin_name }}.pkg packaging/dmg
+
+          # Create the .dmg
+          cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
+          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.BUNDLE_ID }} --force "${{ env.ARTIFACT_NAME }}.dmg"
+          xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
+          xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
+
+      - name: Upload DMG (MacOS)
+        if: ${{ runner.os == 'macOS' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: packaging/${{ env.ARTIFACT_NAME }}.dmg
