@@ -5,7 +5,6 @@
 start_time=$(date +%s)
 
 COPY_BUILD_STEP=false
-PRECOMPILE_STEP=false
 DAW_TO_OPEN=
 REMOVE_PREV_BUILD=false
 BUILD_TYPE=Debug
@@ -17,10 +16,6 @@ for i in "$@"; do
     case $i in
     -c|--copy)
         COPY_BUILD_STEP=true
-        shift
-        ;;
-    -p|-precompile)
-        PRECOMPILE_STEP=true
         shift
         ;;
     -d=*|--daw=*)
@@ -41,25 +36,6 @@ done
 if [ ${REMOVE_PREV_BUILD} = true ]; then
     rm -rf ./bin
     echo -e "[Success] Removed previous build's folders!\n"
-fi
-
-#if [ ! -d "./vendor/juce/build" ]; then
-#    cd ./vendor/juce
-#
-#    echo -e "Configuring JUCE...\n"
-#    cmake -B bin . -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
-#    echo -e "\n[Success] Configured JUCE build!\n"
-#
-#    echo -e "Building JUCE...\n"
-#    cmake --build bin --parallel 8
-#    echo -e "\n[Success] Built JUCE libraries and targets!\n"
-#
-#    cd ../../
-#fi
-
-if [ ${PRECOMPILE_STEP} = true ]; then
-    scripts/precompile.sh -b=${BUILD_TYPE}
-    echo -e "\n[Success] Precompiled binary resources!\n"
 fi
 
 echo -e "Configuring ${PLUGIN_NAME}...\n"
