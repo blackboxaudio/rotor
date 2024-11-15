@@ -15,7 +15,7 @@ on:
 jobs:
   Build:
     name: Build ${{ inputs.build_type }} (${{ inputs.os }})
-    uses: ./.github/workflows/build.reusable.yml
+    uses: ./.github/workflows/reusable.build.yml
     strategy:
       fail-fast: true
       matrix:

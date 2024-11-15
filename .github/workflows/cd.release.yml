@@ -19,7 +19,7 @@ env:
 jobs:
   Build:
     name: Build Release (${{ matrix.os }})
-    uses: ./.github/workflows/build.reusable.yml
+    uses: ./.github/workflows/reusable.build.yml
     strategy:
       fail-fast: true
       matrix:
@@ -30,8 +30,8 @@ jobs:
       upload_artifacts: ${{ true }}
 
   Package:
-    name: Package (${{ matrix.name }})
-    uses: ./.github/workflows/package.reusable.yml
+    name: Package Build (${{ matrix.os }})
+    uses: ./.github/workflows/reusable.package.yml
     needs: [ Build ]
     strategy:
       fail-fast: false
@@ -85,7 +85,7 @@ jobs:
           echo "MACOS_ARTIFACT_NAME=${{ env.PLUGIN_NAME }} v${{ env.PLUGIN_VERSION }} (macOS)" >> $GITHUB_ENV
 
           ls
-          ls "${{ env.MACOS_ARTIFACT_NAME }}"
+          ls "Rotor v1.0.0-beta.1 (macOS)"
 
       - name: Checkout Repository
         uses: actions/checkout@v4

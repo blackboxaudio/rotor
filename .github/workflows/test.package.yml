@@ -5,7 +5,7 @@ on: workflow_dispatch
 jobs:
   Build:
     name: Build Release (${{ matrix.os }})
-    uses: ./.github/workflows/build.reusable.yml
+    uses: ./.github/workflows/reusable.build.yml
     strategy:
       fail-fast: false
       matrix:
@@ -17,7 +17,7 @@ jobs:
 
   Package:
     name: Package ${{ matrix.os }}
-    uses: ./.github/workflows/package.reusable.yml
+    uses: ./.github/workflows/reusable.package.yml
     needs: [ Build ]
     strategy:
       fail-fast: false

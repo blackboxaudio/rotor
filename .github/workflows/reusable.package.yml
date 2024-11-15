@@ -19,6 +19,7 @@ defaults:
 
 jobs:
   Package:
+    name: Package ${{ inputs.plugin_name }} v${{ inputs.plugin_version }} (${{ inputs.os }})
     runs-on: ${{ inputs.os }}
     steps:
       - name: Checkout Repository
