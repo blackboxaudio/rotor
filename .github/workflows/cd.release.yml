@@ -103,9 +103,9 @@ jobs:
         uses: google-github-actions/upload-cloud-storage@v2
         with:
           project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          path: ${{ env.MACOS_ARTIFACT_NAME }}
+          path: $MACOS_ARTIFACT_NAME
           glob: "*.{dmg}"
-          destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
+          destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/$STAGE"
           predefinedAcl: publicRead
           process_gcloudignore: false
 
@@ -118,8 +118,8 @@ jobs:
       - name: Draft Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ env.RELEASE_NAME }}
-          prerelease: ${{ env.STAGE != 'production' }}
+          name: $RELEASE_NAME
+          prerelease: ${{ '$STAGE' != 'production' }}
           draft: true
           body_path: ./CHANGELOG.md
           files: |
