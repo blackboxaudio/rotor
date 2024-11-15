@@ -105,16 +105,6 @@ jobs:
         run: |
           gcloud storage cp "**/*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
 
-      - name: Upload to Google Cloud Storage (MacOS)
-        uses: google-github-actions/upload-cloud-storage@v2
-        with:
-          project_id: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
-          path: "${{ env.MACOS_ARTIFACT_NAME }}"
-          glob: "**/*.{dmg}"
-          destination: "${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
-          predefinedAcl: publicRead
-          process_gcloudignore: false
-
       - name: Prepare Body
         run: |
           echo "### Changelog" >> CHANGELOG.md
