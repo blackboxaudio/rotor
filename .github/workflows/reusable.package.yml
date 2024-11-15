@@ -40,7 +40,6 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          ARTIFACTS_PATH=${{ inputs.plugin_name }}-${{ runner.os }}
           echo "VST3_PATH=${{ inputs.plugin_name }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=${{ inputs.plugin_name }}.component" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ inputs.plugin_name }} v${{ inputs.plugin_version }} (${{ runner.os }})" >> $GITHUB_ENV
@@ -92,16 +91,51 @@ jobs:
           mkdir -p packaging/dmg
           mv packaging/README.pdf packaging/dmg
           mv packaging/build/signed/${{ inputs.plugin_name }}.pkg packaging/dmg
-
+          
           # Create the .dmg
           cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
           codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ inputs.plugin_bundle_id }} --force "${{ env.ARTIFACT_NAME }}.dmg"
           xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
           xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
 
-      - name: Upload DMG (MacOS)
+      - name: Upload Installer (MacOS)
         if: ${{ runner.os == 'macOS' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: packaging/${{ env.ARTIFACT_NAME }}.dmg
+
+      - name: Cache IPP (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        id: cache-ipp
+        uses: actions/cache@v4
+        with:
+            key: ipp-v5
+            path: C:\Program Files (x86)\Intel
+
+      - name: Install IPP (Windows)
+        if: ${{ runner.os == 'Windows' && steps.cache-ipp.outputs.cache-hit != 'true' }}
+        run: |
+          curl --output oneapi.exe https://registrationcenter-download.intel.com/akdlm/IRC_NAS/b4adec02-353b-4144-aa21-f2087040f316/w_ipp_oneapi_p_2021.11.0.533_offline.exe
+          ./oneapie.exe -s -x -f oneapi
+          ./oneapi/bootstrapper.exe -s -c --action install --components=intel.oneapi.win.ipp.devel --eula=accept -p=NEED_VS2022_INTEGRATION=1 --log-dir=.  
+
+      - name: Save IPP Cache (Windows)
+        if: ${{ runner.os == 'Windows' && steps.cache-ipp.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@v4
+        with:
+            key: ipp-v5
+            path: C:\Program Files (x86)\Intel
+
+      - name: Build Installer (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          iscc "packaging\${{ inputs.plugin_name }}.iss"
+          mv "packaging/Output/${{ env.ARTIFACT_NAME }}.exe" ""
+
+      - name: Upload Installer (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.ARTIFACT_NAME }}.exe
