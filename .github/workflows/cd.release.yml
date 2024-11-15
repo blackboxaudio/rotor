@@ -22,7 +22,8 @@ jobs:
       - name: Get Git Branch
         run: |
           echo $(git rev-parse --abbrev-ref HEAD)
-          echo "BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          echo "BRANCH=$BRANCH" >> $GITHUB_ENV
 
       - name: Verify Branches
         if: ${{ env.BRANCH != 'main' && env.BRANCH != 'develop' }}
