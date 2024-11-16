@@ -85,7 +85,7 @@ jobs:
           echo "STAGE_VERSION=$STAGE_VERSION" >> $GITHUB_ENV
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
           echo "INSTALLER_ARTIFACT_NAME=$PLUGIN_NAME-$PLUGIN_VERSION" >> $GITHUB_ENV
-          echo "INSTALLER_DELIVERABLE_NAME=\"$PLUGIN_NAME $PLUGIN_VERSION Installer\"" >> $GITHUB_ENV
+          echo "INSTALLER_DELIVERABLE_NAME=$PLUGIN_NAME $PLUGIN_VERSION Installer" >> $GITHUB_ENV
 
       - name: Check Tag & Version
         run: |
