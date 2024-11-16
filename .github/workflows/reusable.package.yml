@@ -42,6 +42,7 @@ jobs:
         run: |
           echo "VST3_PATH=${{ inputs.plugin_name }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=${{ inputs.plugin_name }}.component" >> $GITHUB_ENV
+          echo "INSTALLER_NAME=${{ inputs.plugin_name }}-${{ inputs.plugin_version }}" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ inputs.plugin_name }}-${{ inputs.plugin_version }}-${{ runner.os }}" >> $GITHUB_ENV
 
       - name: Import Certificates (MacOS)
@@ -93,17 +94,17 @@ jobs:
           mv packaging/build/signed/${{ inputs.plugin_name }}.pkg packaging/dmg
           
           # Create the .dmg
-          cd packaging && appdmg dmg.json "${{ env.ARTIFACT_NAME }}.dmg"
-          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ inputs.plugin_bundle_id }} --force "${{ env.ARTIFACT_NAME }}.dmg"
-          xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
-          xcrun stapler staple "${{ env.ARTIFACT_NAME }}.dmg"
+          cd packaging && appdmg dmg.json "${{ env.INSTALLER_NAME }}.dmg"
+          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ inputs.plugin_bundle_id }} --force "${{ env.INSTALLER_NAME }}.dmg"
+          xcrun notarytool submit "${{ env.INSTALLER_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
+          xcrun stapler staple "${{ env.INSTALLER_NAME }}.dmg"
 
       - name: Upload Installer (MacOS)
         if: ${{ runner.os == 'macOS' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: packaging/${{ env.ARTIFACT_NAME }}.dmg
+          path: packaging/${{ env.INSTALLER_NAME }}.dmg
 
       - name: Cache IPP (Windows)
         if: ${{ runner.os == 'Windows' }}
@@ -131,11 +132,11 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         run: |
           iscc "packaging\${{ inputs.plugin_name }}.iss"
-          mv "packaging\Output\${{ env.ARTIFACT_NAME }}.exe" .
+          mv "packaging\Output\${{ env.INSTALLER_NAME }}.exe" .
 
       - name: Upload Installer (Windows)
         if: ${{ runner.os == 'Windows' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ env.ARTIFACT_NAME }}.exe
+          path: ${{ env.INSTALLER_NAME }}.exe
