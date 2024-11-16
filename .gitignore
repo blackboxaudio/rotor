@@ -1,26 +1,39 @@
-# IDE cache folders
+# ================
+# Build outputs
+# ================
+# Directories
+**/build
+bin/
+out/
+
+# Binaries
+**/*.vst3
+**/*.component
+
+# Packaging
+packaging/dmg
+packaging/Output
+**/*.dmg
+**/*.pkg
+**/*.exe
+
+# CMake
+**/cmake-build-*
+
+# ================
+# Google Cloud
+# ================
+gha-creds-*.json
+
+# ================
+# IDEs
+# ================
 .vs/
 .vscode/
 .idea/
 
-# MacOS-related
+# ================
+# OS
+# ================
+# MacOS
 **/.DS_Store
-
-# JUCE
-juce/
-
-# Binaries and executables
-bin/
-out/
-**/build
-**/dmg
-**/*.dmg
-
-project/Backup/
-project/Samples/
-project/Desktop.ini
-
-**/cmake-build-debug
-
-# Google Cloud stuff
-gha-creds-*.json
