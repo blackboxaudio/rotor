@@ -80,7 +80,7 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         run: |
           mkdir -p dist
-          mv "${{ env.VST3_PATH }}/Contents/x86_64-win/${{ env.PLUGIN_NAME }}.vst" dist
+          mv "${{ env.VST3_PATH }}/Contents/x86_64-win/${{ env.PLUGIN_NAME }}.vst3" dist
 
       - name: Upload VST3 (Windows)
         if: ${{ inputs.upload_artifacts && runner.os == 'Windows' }}
