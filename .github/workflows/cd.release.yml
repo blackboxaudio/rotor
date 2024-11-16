@@ -84,8 +84,8 @@ jobs:
           echo "STAGE=$STAGE" >> $GITHUB_ENV
           echo "STAGE_VERSION=$STAGE_VERSION" >> $GITHUB_ENV
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
-          echo "INSTALLER_NAME_HYPHENATED=$PLUGIN_NAME-$PLUGIN_VERSION-Installer" >> $GITHUB_ENV
-          echo "INSTALLER_NAME_SPACED=$PLUGIN_NAME $PLUGIN_VERSION Installer" >> $GITHUB_ENV
+          echo "INSTALLER_ARTIFACT_NAME=$PLUGIN_NAME-$PLUGIN_VERSION" >> $GITHUB_ENV
+          echo "INSTALLER_DELIVERABLE_NAME=$PLUGIN_NAME $PLUGIN_VERSION Installer" >> $GITHUB_ENV
 
       - name: Check Tag & Version
         run: |
@@ -114,8 +114,8 @@ jobs:
       - name: Upload to Cloud Storage
         run: |
           ls
-          mv "${{ env.INSTALLER_NAME_HYPHENATED }}/${{ env.INSTALLER_NAME_HYPHENATED }}.dmg" "./${{ env.INSTALLER_NAME_SPACED }}.dmg"
-          mv "${{ env.INSTALLER_NAME_HYPHENATED }}/${{ env.INSTALLER_NAME_HYPHENATED }}.exe" "./${{ env.INSTALLER_NAME_SPACED }}.exe"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-macOS/${{ env.INSTALLER_ARTIFACT_NAME }}-macOS.dmg" "./${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-Windows/${{ env.INSTALLER_ARTIFACT_NAME }}-Windows.exe" "./${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
           gcloud storage cp "*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
           gcloud storage cp "*.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
 
