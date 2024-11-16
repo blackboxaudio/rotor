@@ -74,11 +74,17 @@ jobs:
         run: |
           curl -LO "https://github.com/Tracktion/pluginval/releases/download/v1.0.3/pluginval_Windows.zip"
           7z x pluginval_Windows.zip
-          ./pluginval.exe --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}/Contents/x86_64-win/Rotor.vst3"
+          ./pluginval.exe --strictness-level 10 --verbose --validate "${{ env.VST3_PATH }}/Contents/x86_64-win/${{ env.PLUGIN_NAME }}.vst3"
+
+      - name: Move Binaries (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          mkdir -p dist
+          mv "${{ env.VST3_PATH }}/Contents/x86_64-win/${{ env.PLUGIN_NAME }}.vst" dist
 
       - name: Upload VST3 (Windows)
         if: ${{ inputs.upload_artifacts && runner.os == 'Windows' }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ env.VST3_PATH }}/Contents/x86_64-win/Rotor.vst3
+          path: dist
