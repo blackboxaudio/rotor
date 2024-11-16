@@ -115,9 +115,9 @@ jobs:
         run: |
           ls
           mv "${{ env.INSTALLER_NAME_HYPHENATED }}/${{ env.INSTALLER_NAME_HYPHENATED }}.dmg" "./${{ env.INSTALLER_NAME_SPACED }}.dmg"
-          gcloud storage cp "${{ env.INSTALLER_NAME_SPACED }}.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
           mv "${{ env.INSTALLER_NAME_HYPHENATED }}/${{ env.INSTALLER_NAME_HYPHENATED }}.exe" "./${{ env.INSTALLER_NAME_SPACED }}.exe"
-          gcloud storage cp "${{ env.INSTALLER_NAME_SPACED }}.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
+          gcloud storage cp "*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
+          gcloud storage cp "*.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.STAGE }}"
 
       - name: Prepare Body
         run: |
