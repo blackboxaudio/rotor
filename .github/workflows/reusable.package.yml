@@ -43,7 +43,7 @@ jobs:
           echo "VST3_PATH=${{ inputs.plugin_name }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=${{ inputs.plugin_name }}.component" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ inputs.plugin_name }}-${{ inputs.plugin_version }}-${{ runner.os }}" >> $GITHUB_ENV
-          echo "INSTALLER_NAME=${{ inputs.plugin_name}}\ ${{ inputs.plugin_version }}\ Installer" >> $GITHUB_ENV
+          echo "INSTALLER_NAME=${{ inputs.plugin_name}} ${{ inputs.plugin_version }} Installer" >> $GITHUB_ENV
 
       - name: Import Certificates (MacOS)
         uses: apple-actions/import-codesign-certs@v3
