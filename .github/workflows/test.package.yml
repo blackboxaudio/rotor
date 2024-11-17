@@ -26,5 +26,5 @@ jobs:
     with:
       os: ${{ matrix.os }}
       plugin_name: Rotor
-      plugin_version: 1.0.0
+      plugin_version: 1.1.0-beta.1
     secrets: inherit
