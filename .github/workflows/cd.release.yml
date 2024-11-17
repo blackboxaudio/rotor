@@ -85,7 +85,7 @@ jobs:
           echo "STAGE_VERSION=$STAGE_VERSION" >> $GITHUB_ENV
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
           echo "INSTALLER_ARTIFACT_NAME=$PLUGIN_NAME-$PLUGIN_VERSION" >> $GITHUB_ENV
-          echo "INSTALLER_DELIVERABLE_NAME=$PLUGIN_NAME $PLUGIN_VERSION Installer" >> $GITHUB_ENV
+          echo "INSTALLER_DELIVERABLE_NAME=$PLUGIN_NAME-$PLUGIN_VERSION-Installer" >> $GITHUB_ENV
           echo "INSTALLER_ARTIFACT_STORAGE_PATH=plugins/$PLUGIN_NAME/$STAGE/$PLUGIN_VERSION" >> $GITHUB_ENV
 
       - name: Check Tag & Version
@@ -115,14 +115,12 @@ jobs:
       - name: Upload to Cloud Storage
         run: |
           # MacOS
-          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-macOS/${{ env.INSTALLER_ARTIFACT_NAME }}.dmg" "./'${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg'"
-          ls
-          gcloud storage cp "./'${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg'" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_ARTIFACT_STORAGE_PATH }}"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-macOS/${{ env.INSTALLER_ARTIFACT_NAME }}.dmg" "./${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"
+          gcloud storage cp "*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_ARTIFACT_STORAGE_PATH }}"
           
           # Windows
-          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-Windows/${{ env.INSTALLER_ARTIFACT_NAME }}.exe" "./'${{ env.INSTALLER_DELIVERABLE_NAME }}.exe'"
-          ls
-          gcloud storage cp "./'${{ env.INSTALLER_DELIVERABLE_NAME }}.exe'" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_ARTIFACT_STORAGE_PATH }}"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-Windows/${{ env.INSTALLER_ARTIFACT_NAME }}.exe" "./${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
+          gcloud storage cp "*.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_ARTIFACT_STORAGE_PATH }}"
 
       - name: Prepare Body
         run: |
@@ -159,5 +157,5 @@ jobs:
           draft: true
           body_path: ./RELEASE.md
           files: |
-            "./'${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg'"
-            "./'${{ env.INSTALLER_DELIVERABLE_NAME }}.exe'"
+            **/*.dmg
+            **/*.exe
