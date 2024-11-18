@@ -22,7 +22,10 @@ jobs:
       - name: Import Environment Variables
         run: |
           source plugin.env
+          echo "COMPANY_NAME=$COMPANY_NAME" >> $GITHUB_ENV
+          echo "COMPANY_WEBSITE=$COMPANY_WEBSITE" >> $GITHUB_ENV
           echo "PLUGIN_NAME=$PLUGIN_NAME" >> $GITHUB_ENV
+          echo "PLUGIN_CODE=$PLUGIN_CODE" >> $GITHUB_ENV
           echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> $GITHUB_ENV
           echo "PLUGIN_BUNDLE_ID=$PLUGIN_BUNDLE_ID" >> $GITHUB_ENV
 
