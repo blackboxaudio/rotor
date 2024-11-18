@@ -582,7 +582,7 @@
 				<key>USE_HFS+_COMPRESSION</key>
 				<false/>
 				<key>VERSION</key>
-				<string>{{VERSION}}</string>
+				<string>{{PLUGIN_VERSION}}</string>
 			</dict>
 			<key>TYPE</key>
 			<integer>0</integer>
@@ -1152,7 +1152,7 @@
 				<key>USE_HFS+_COMPRESSION</key>
 				<false/>
 				<key>VERSION</key>
-				<string>{{VERSION}}</string>
+				<string>{{PLUGIN_VERSION}}</string>
 			</dict>
 			<key>TYPE</key>
 			<integer>0</integer>

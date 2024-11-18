@@ -1,6 +1,6 @@
-#define PluginName GetEnv('PLUGIN_NAME')
-#define Version GetEnv('PLUGIN_VERSION')
-#define Publisher GetEnv('COMPANY_NAME')
+#define PluginName {{PLUGIN_NAME}}
+#define Version {{PLUGIN_VERSION}}
+#define Publisher {{COMPANY_NAME}}
 #define Year GetDateTimeString("yyyy","","")
 
 [Setup]
