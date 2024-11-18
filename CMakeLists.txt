@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.15)
 project(Rotor VERSION 1.0.0)
 
 # Handle environment variables
-set(ENV_FILE "${CMAKE_SOURCE_DIR}/.env")
+set(ENV_FILE "${CMAKE_SOURCE_DIR}/plugin.env")
 include("${CMAKE_SOURCE_DIR}/cmake/load_env.cmake")
 load_env_file("${ENV_FILE}")
 
