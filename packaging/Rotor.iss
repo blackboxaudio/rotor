@@ -1,6 +1,6 @@
-#define PluginName "Rotor"
-#define Version "1.1.0-beta.1"
-#define Publisher "Black Box Audio"
+#define PluginName GetEnv('PLUGIN_NAME')
+#define Version GetEnv('PLUGIN_VERSION')
+#define Publisher GetEnv('COMPANY_NAME')
 #define Year GetDateTimeString("yyyy","","")
 
 [Setup]

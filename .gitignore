@@ -20,6 +20,9 @@ packaging/Output
 # CMake
 **/cmake-build-*
 
+# .env file (more for configuration than secrets)
+**/*.env
+
 # ================
 # Google Cloud
 # ================

@@ -38,9 +38,6 @@ jobs:
             os: windows-2022
     with:
       os: ${{ matrix.os }}
-      plugin_name: Rotor
-      plugin_version: 1.1.0-beta.1
-      plugin_bundle_id: com.bbx-audio.rotor
     secrets: inherit
 
   Release:
@@ -49,15 +46,18 @@ jobs:
     permissions:
       contents: write
       id-token: write
-    env:
-      PLUGIN_NAME: Rotor
-      PLUGIN_VERSION: 1.1.0-beta.1
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+
+      - name: Import Environment Variables
+        run: |
+          source .env
+          echo "PLUGIN_NAME=$PLUGIN_NAME" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> $GITHUB_ENV
 
       - name: Set Environment Variables
         run: |
