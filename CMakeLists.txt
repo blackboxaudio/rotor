@@ -13,14 +13,14 @@ load_env_file("${ENV_FILE}")
 add_subdirectory(vendor/juce)
 
 juce_add_plugin(Rotor
-        COMPANY_NAME "${COMPANY_NAME}"
-        COMPANY_WEBSITE "https://bbx-audio.com"
+        COMPANY_NAME ${COMPANY_NAME}
+        COMPANY_WEBSITE ${COMPANY_WEBSITE}
         # CAUTION: Only X.Y.Z format is allowed, no stage or stage versions (e.g. 1.0.0-beta.1)
         VERSION "1.0.0"
-        BUNDLE_ID "${PLUGIN_BUNDLE}"
-        PRODUCT_NAME "${PLUGIN_NAME}"
-        PLUGIN_NAME "${PLUGIN_NAME}"
-        PLUGIN_CODE "${PLUGIN_CODE}"
+        BUNDLE_ID ${PLUGIN_BUNDLE}
+        PRODUCT_NAME ${PLUGIN_NAME}
+        PLUGIN_NAME ${PLUGIN_NAME}
+        PLUGIN_CODE ${PLUGIN_CODE}
         PLUGIN_MANUFACTURER_CODE BBxA
         FORMATS AU VST3
         IS_SYNTH FALSE
