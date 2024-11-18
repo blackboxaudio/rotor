@@ -1,6 +1,6 @@
-#define PluginName {{PLUGIN_NAME}}
-#define Version {{PLUGIN_VERSION}}
-#define Publisher {{COMPANY_NAME}}
+#define PluginName "{{PLUGIN_NAME}}"
+#define Version "{{PLUGIN_VERSION}}"
+#define Publisher "{{COMPANY_NAME}}"
 #define Year GetDateTimeString("yyyy","","")
 
 [Setup]

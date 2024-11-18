@@ -138,7 +138,7 @@ jobs:
           ISS_FILE="packaging/${{ env.PLUGIN_NAME }}.iss"
           sed -i.bak "s/{{PLUGIN_NAME}}/${{ env.PLUGIN_NAME }}/g" "$ISS_FILE"
           sed -i.bak "s/{{PLUGIN_VERSION}}/${{ env.PLUGIN_VERSION }}/g" "$ISS_FILE"
-          sed -i.bak "s/{{COMPANY_NAME}}/${{ env.COMPANY_NAMY }}/g" "$ISS_FILE"
+          sed -i.bak "s/{{COMPANY_NAME}}/${{ env.COMPANY_NAME }}/g" "$ISS_FILE"
           
           iscc "packaging\${{ env.PLUGIN_NAME }}.iss"
           mv "packaging\Output\${{ env.INSTALLER_NAME }}.exe" .
