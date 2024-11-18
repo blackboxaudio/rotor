@@ -77,7 +77,7 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
         run: |
           PKGPROJ_FILE="packaging/$PLUGIN_NAME.pkgproj"
-          sed.bak -i "s/{{PLUGIN_VERSION}}/$PLUGIN_VERSION/g" "$PKGPROJ_FILE"
+          sed -i.bak "s/{{PLUGIN_VERSION}}/$PLUGIN_VERSION/g" "$PKGPROJ_FILE"
           packagesbuild "$PKGPROJ_FILE"
 
       - name: Sign Installer (MacOS)
@@ -135,10 +135,10 @@ jobs:
       - name: Build Installer (Windows)
         if: ${{ runner.os == 'Windows' }}
         run: |
-          ISS_FILE="packaging/$PLUGIN_NAME.iss"
-          sed -i.bak "s/{{PLUGIN_NAME}}/$PLUGIN_NAME/g" "$ISS_FILE"
-          sed -i.bak "s/{{PLUGIN_VERSION}}/$PLUGIN_VERSION/g" "$ISS_FILE"
-          sed -i.bak "s/{{COMPANY_NAME}}/$COMPANY_NAME/g" "$ISS_FILE"
+          ISS_FILE="packaging/${{ env.PLUGIN_NAME }}.iss"
+          sed -i.bak "s/{{PLUGIN_NAME}}/${{ env.PLUGIN_NAME }}/g" "$ISS_FILE"
+          sed -i.bak "s/{{PLUGIN_VERSION}}/${{ env.PLUGIN_VERSION }}/g" "$ISS_FILE"
+          sed -i.bak "s/{{COMPANY_NAME}}/${{ env.COMPANY_NAMY }}/g" "$ISS_FILE"
           
           iscc "packaging\${{ env.PLUGIN_NAME }}.iss"
           mv "packaging\Output\${{ env.INSTALLER_NAME }}.exe" .
