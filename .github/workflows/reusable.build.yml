@@ -32,13 +32,11 @@ jobs:
         with:
           submodules: true
 
-      - name: Configure
-        working-directory: ${{ runner.workspace }}/rotor
-        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ inputs.build_type }}
-
-      - name: Build
-        working-directory: ${{ runner.workspace }}/rotor
-        run: cmake --build bin --config ${{ inputs.build_type }} --target ${{ env.PLUGIN_NAME }}_All --parallel 8
+      - name: Import Environment Variables
+        run: |
+          source plugin.env
+          echo "PLUGIN_NAME=$PLUGIN_NAME" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> $GITHUB_ENV
 
       - name: Set Environment Variables
         run: |
@@ -46,6 +44,14 @@ jobs:
           echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
           echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ runner.os }}" >> $GITHUB_ENV
+
+      - name: Configure
+        working-directory: ${{ runner.workspace }}/rotor
+        run: cmake -B bin . -DCMAKE_BUILD_TYPE=${{ inputs.build_type }}
+
+      - name: Build
+        working-directory: ${{ runner.workspace }}/rotor
+        run: cmake --build bin --config ${{ inputs.build_type }} --target ${{ env.PLUGIN_NAME }}_All --parallel 8
 
       - name: Pluginval (MacOS)
         if: ${{ runner.os == 'macOS' }}
