@@ -1,4 +1,4 @@
-name: Release
+name: Release (CD)
 
 on:
   push:
@@ -38,9 +38,6 @@ jobs:
             os: windows-2022
     with:
       os: ${{ matrix.os }}
-      plugin_name: Rotor
-      plugin_version: 1.1.0-beta.1
-      plugin_bundle_id: com.bbx-audio.rotor
     secrets: inherit
 
   Release:
@@ -49,15 +46,22 @@ jobs:
     permissions:
       contents: write
       id-token: write
-    env:
-      PLUGIN_NAME: Rotor
-      PLUGIN_VERSION: 1.1.0-beta.1
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Download Artifacts
         uses: actions/download-artifact@v4
+
+      - name: Import Environment Variables
+        run: |
+          source plugin.env
+          echo "COMPANY_NAME=$COMPANY_NAME" >> $GITHUB_ENV
+          echo "COMPANY_WEBSITE=$COMPANY_WEBSITE" >> $GITHUB_ENV
+          echo "PLUGIN_NAME=$PLUGIN_NAME" >> $GITHUB_ENV
+          echo "PLUGIN_CODE=$PLUGIN_CODE" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> $GITHUB_ENV
+          echo "PLUGIN_BUNDLE_ID=$PLUGIN_BUNDLE_ID" >> $GITHUB_ENV
 
       - name: Set Environment Variables
         run: |
@@ -114,8 +118,10 @@ jobs:
 
       - name: Upload to Cloud Storage
         run: |
-          gcloud storage cp "${{ env.INSTALLER_ARTIFACT_NAME }}-macOS/*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"          
-          gcloud storage cp "${{ env.INSTALLER_ARTIFACT_NAME }}-Windows/*.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-macOS/${{ env.INSTALLER_ARTIFACT_NAME }}.dmg" "${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-Windows/${{ env.INSTALLER_ARTIFACT_NAME }}.exe" "${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
+          gcloud storage cp "*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"          
+          gcloud storage cp "*.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
 
       - name: Prepare Body
         run: |

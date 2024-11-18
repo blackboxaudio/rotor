@@ -26,12 +26,28 @@ jobs:
     runs-on: ${{ inputs.os }}
     env:
       BUILD_TYPE: ${{ inputs.build_type }}
-      PLUGIN_NAME: Rotor
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           submodules: true
+
+      - name: Import Environment Variables
+        run: |
+          source plugin.env
+          echo "COMPANY_NAME=$COMPANY_NAME" >> $GITHUB_ENV
+          echo "COMPANY_WEBSITE=$COMPANY_WEBSITE" >> $GITHUB_ENV
+          echo "PLUGIN_NAME=$PLUGIN_NAME" >> $GITHUB_ENV
+          echo "PLUGIN_CODE=$PLUGIN_CODE" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> $GITHUB_ENV
+          echo "PLUGIN_BUNDLE_ID=$PLUGIN_BUNDLE_ID" >> $GITHUB_ENV
+
+      - name: Set Environment Variables
+        run: |
+          ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ inputs.build_type }}
+          echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+          echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ runner.os }}" >> $GITHUB_ENV
 
       - name: Configure
         working-directory: ${{ runner.workspace }}/rotor
@@ -40,13 +56,6 @@ jobs:
       - name: Build
         working-directory: ${{ runner.workspace }}/rotor
         run: cmake --build bin --config ${{ inputs.build_type }} --target ${{ env.PLUGIN_NAME }}_All --parallel 8
-
-      - name: Set Environment Variables
-        run: |
-          ARTIFACTS_PATH=bin/${{ env.PLUGIN_NAME }}_artefacts/${{ inputs.build_type }}
-          echo "VST3_PATH=$ARTIFACTS_PATH/VST3/${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
-          echo "AU_PATH=$ARTIFACTS_PATH/AU/${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ runner.os }}" >> $GITHUB_ENV
 
       - name: Pluginval (MacOS)
         if: ${{ runner.os == 'macOS' }}

@@ -4,23 +4,29 @@ cmake_minimum_required(VERSION 3.15)
 # Declaring targets and describing source/ binary directories
 project(Rotor VERSION 1.0.0)
 
+# Handle environment variables
+set(ENV_FILE "${CMAKE_SOURCE_DIR}/plugin.env")
+include("${CMAKE_SOURCE_DIR}/cmake/load_env.cmake")
+load_env_file("${ENV_FILE}")
+
 # Declare dependency on JUCE (as installed on the local system)
 add_subdirectory(vendor/juce)
 
 juce_add_plugin(Rotor
+        COMPANY_NAME ${COMPANY_NAME}
+        COMPANY_WEBSITE ${COMPANY_WEBSITE}
+        # CAUTION: Only X.Y.Z format is allowed, no stage or stage versions (e.g. 1.0.0-beta.1)
         VERSION "1.0.0"
-        COMPANY_NAME "Black Box Audio"
-        COMPANY_WEBSITE "https://bbx-audio.com"
+        BUNDLE_ID ${PLUGIN_BUNDLE}
+        PRODUCT_NAME ${PLUGIN_NAME}
+        PLUGIN_NAME ${PLUGIN_NAME}
+        PLUGIN_CODE ${PLUGIN_CODE}
+        PLUGIN_MANUFACTURER_CODE BBxA
+        FORMATS AU VST3
         IS_SYNTH FALSE
         IS_MIDI_EFFECT FALSE
         NEEDS_MIDI_INPUT FALSE
-        NEEDS_MIDI_OUTPUT FALSE
-        PLUGIN_MANUFACTURER_CODE BBxA
-        PLUGIN_CODE Rotr
-        PLUGIN_NAME Rotor
-        BUNDLE_ID "com.bbx-audio.rotor"
-        FORMATS AU VST3
-        PRODUCT_NAME "Rotor")
+        NEEDS_MIDI_OUTPUT FALSE)
 
 # Create universal binaries to handle Intel- and ARM-based MacOS
 set_target_properties(Rotor PROPERTIES OSX_ARCHITECTURES "x86_64;arm64")

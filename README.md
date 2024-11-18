@@ -1,6 +1,7 @@
 # Rotor
 
 [![Build (CI)](https://github.com/blackboxaudio/rotor/actions/workflows/ci.build.yml/badge.svg)](https://github.com/blackboxaudio/rotor/actions/workflows/ci.build.yml)
+[![Release (CD)](https://github.com/blackboxaudio/rotor/actions/workflows/cd.release.yml/badge.svg)](https://github.com/blackboxaudio/rotor/actions/workflows/cd.release.yml)
 [![JUCE](https://img.shields.io/badge/JUCE-v6.1.6-ff69b4)](https://juce.com/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 

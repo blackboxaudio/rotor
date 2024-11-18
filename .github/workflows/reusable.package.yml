@@ -6,15 +6,6 @@ on:
       os:
         required: true
         type: string
-      plugin_name:
-        required: true
-        type: string
-      plugin_version:
-        required: true
-        type: string
-      plugin_bundle_id:
-        required: true
-        type: string
 
 defaults:
   run:
@@ -22,28 +13,38 @@ defaults:
 
 jobs:
   Package:
-    name: Package ${{ inputs.plugin_name }}-${{ inputs.plugin_version }}-${{ inputs.os }}
+    name: Package (${{ inputs.os }})
     runs-on: ${{ inputs.os }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Import Environment Variables
+        run: |
+          source plugin.env
+          echo "COMPANY_NAME=$COMPANY_NAME" >> $GITHUB_ENV
+          echo "COMPANY_WEBSITE=$COMPANY_WEBSITE" >> $GITHUB_ENV
+          echo "PLUGIN_NAME=$PLUGIN_NAME" >> $GITHUB_ENV
+          echo "PLUGIN_CODE=$PLUGIN_CODE" >> $GITHUB_ENV
+          echo "PLUGIN_VERSION=$PLUGIN_VERSION" >> $GITHUB_ENV
+          echo "PLUGIN_BUNDLE_ID=$PLUGIN_BUNDLE_ID" >> $GITHUB_ENV
+
+      - name: Set Environment Variables
+        run: |
+          echo "VST3_PATH=${{ env.PLUGIN_NAME }}.vst3" >> $GITHUB_ENV
+          echo "AU_PATH=${{ env.PLUGIN_NAME }}.component" >> $GITHUB_ENV
+          echo "INSTALLER_NAME=${{ env.PLUGIN_NAME }}-${{ env.PLUGIN_VERSION }}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${{ env.PLUGIN_NAME }}-${{ env.PLUGIN_VERSION }}-${{ runner.os }}" >> $GITHUB_ENV
+
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.plugin_name }}-${{ runner.os }}
+          name: ${{ env.PLUGIN_NAME }}-${{ runner.os }}
 
       - name: Delete Artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
-          name: ${{ inputs.plugin_name }}-${{ runner.os }}
-
-      - name: Set Environment Variables
-        run: |
-          echo "VST3_PATH=${{ inputs.plugin_name }}.vst3" >> $GITHUB_ENV
-          echo "AU_PATH=${{ inputs.plugin_name }}.component" >> $GITHUB_ENV
-          echo "INSTALLER_NAME=${{ inputs.plugin_name }}-${{ inputs.plugin_version }}" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=${{ inputs.plugin_name }}-${{ inputs.plugin_version }}-${{ runner.os }}" >> $GITHUB_ENV
+          name: ${{ env.PLUGIN_NAME }}-${{ runner.os }}
 
       - name: Import Certificates (MacOS)
         uses: apple-actions/import-codesign-certs@v3
@@ -74,14 +75,17 @@ jobs:
 
       - name: Build Installer (MacOS)
         if: ${{ runner.os == 'macOS' }}
-        run: packagesbuild packaging/Rotor.pkgproj
+        run: |
+          PKGPROJ_FILE="packaging/$PLUGIN_NAME.pkgproj"
+          sed -i.bak "s/{{PLUGIN_VERSION}}/$PLUGIN_VERSION/g" "$PKGPROJ_FILE"
+          packagesbuild "$PKGPROJ_FILE"
 
       - name: Sign Installer (MacOS)
         if: ${{ runner.os == 'macOS' }}
         run: |
           mkdir -p packaging/build/signed
-          productsign -s "${{ secrets.DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ inputs.plugin_name }}.pkg" "packaging/build/signed/${{ inputs.plugin_name }}.pkg"
-          pkgutil --check-signature "packaging/build/signed/${{ inputs.plugin_name }}.pkg"
+          productsign -s "${{ secrets.DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ env.PLUGIN_NAME }}.pkg" "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
+          pkgutil --check-signature "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
 
       - name: Package Installer (MacOS)
         if: ${{ runner.os == 'macOS' }}
@@ -91,11 +95,11 @@ jobs:
           npm install -g appdmg
           mkdir -p packaging/dmg
           mv packaging/README.pdf packaging/dmg
-          mv packaging/build/signed/${{ inputs.plugin_name }}.pkg packaging/dmg
+          mv packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg packaging/dmg
           
           # Create the .dmg
           cd packaging && appdmg dmg.json "${{ env.INSTALLER_NAME }}.dmg"
-          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ inputs.plugin_bundle_id }} --force "${{ env.INSTALLER_NAME }}.dmg"
+          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.PLUGIN_BUNDLE_ID }} --force "${{ env.INSTALLER_NAME }}.dmg"
           xcrun notarytool submit "${{ env.INSTALLER_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
           xcrun stapler staple "${{ env.INSTALLER_NAME }}.dmg"
 
@@ -111,8 +115,8 @@ jobs:
         id: cache-ipp
         uses: actions/cache@v4
         with:
-            key: ipp-v5
-            path: C:\Program Files (x86)\Intel
+          key: ipp-v5
+          path: C:\Program Files (x86)\Intel
 
       - name: Install IPP (Windows)
         if: ${{ runner.os == 'Windows' && steps.cache-ipp.outputs.cache-hit != 'true' }}
@@ -125,13 +129,18 @@ jobs:
         if: ${{ runner.os == 'Windows' && steps.cache-ipp.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v4
         with:
-            key: ipp-v5
-            path: C:\Program Files (x86)\Intel
+          key: ipp-v5
+          path: C:\Program Files (x86)\Intel
 
       - name: Build Installer (Windows)
         if: ${{ runner.os == 'Windows' }}
         run: |
-          iscc "packaging\${{ inputs.plugin_name }}.iss"
+          ISS_FILE="packaging/${{ env.PLUGIN_NAME }}.iss"
+          sed -i.bak "s/{{PLUGIN_NAME}}/${{ env.PLUGIN_NAME }}/g" "$ISS_FILE"
+          sed -i.bak "s/{{PLUGIN_VERSION}}/${{ env.PLUGIN_VERSION }}/g" "$ISS_FILE"
+          sed -i.bak "s/{{COMPANY_NAME}}/${{ env.COMPANY_NAME }}/g" "$ISS_FILE"
+          
+          iscc "packaging\${{ env.PLUGIN_NAME }}.iss"
           mv "packaging\Output\${{ env.INSTALLER_NAME }}.exe" .
 
       - name: Upload Installer (Windows)

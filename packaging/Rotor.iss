@@ -1,6 +1,6 @@
-#define PluginName "Rotor"
-#define Version "1.1.0-beta.1"
-#define Publisher "Black Box Audio"
+#define PluginName "{{PLUGIN_NAME}}"
+#define Version "{{PLUGIN_VERSION}}"
+#define Publisher "{{COMPANY_NAME}}"
 #define Year GetDateTimeString("yyyy","","")
 
 [Setup]
