@@ -114,8 +114,10 @@ jobs:
 
       - name: Upload to Cloud Storage
         run: |
-          gcloud storage cp "${{ env.INSTALLER_ARTIFACT_NAME }}-macOS/*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"          
-          gcloud storage cp "${{ env.INSTALLER_ARTIFACT_NAME }}-Windows/*.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-macOS/${{ env.INSTALLER_ARTIFACT_NAME }}.dmg" "${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"
+          mv "${{ env.INSTALLER_ARTIFACT_NAME }}-Windows/${{ env.INSTALLER_ARTIFACT_NAME }}.exe" "${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
+          gcloud storage cp "*.dmg" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.dmg"          
+          gcloud storage cp "*.exe" "gs://${{ secrets.GOOGLE_CLOUD_STORAGE_BUCKET }}/${{ env.INSTALLER_DELIVERABLE_STORAGE_PATH }}/${{ env.INSTALLER_DELIVERABLE_NAME }}.exe"
 
       - name: Prepare Body
         run: |
