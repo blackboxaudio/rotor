@@ -5,7 +5,7 @@
 [![JUCE](https://img.shields.io/badge/JUCE-v6.1.6-ff69b4)](https://juce.com/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-> Modern ring modulation effect plugin
+> Ring modulation effect plugin written in C++ ⚙️
   
 <div style="text-align: center">
     <img 
