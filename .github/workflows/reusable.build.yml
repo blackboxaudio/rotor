@@ -26,7 +26,6 @@ jobs:
     runs-on: ${{ inputs.os }}
     env:
       BUILD_TYPE: ${{ inputs.build_type }}
-      PLUGIN_NAME: Rotor
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
