@@ -50,15 +50,15 @@ jobs:
         uses: apple-actions/import-codesign-certs@v3
         if: ${{ runner.os == 'macOS' }}
         with:
-          p12-file-base64: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS }}
-          p12-password: ${{ secrets.DEVELOPER_ID_CERTIFICATIONS_PASSWORD }}
+          p12-file-base64: ${{ secrets.APPLE_DEVELOPER_ID_CERTIFICATIONS }}
+          p12-password: ${{ secrets.APPLE_DEVELOPER_ID_CERTIFICATIONS_PASSWORD }}
 
       - name: Sign Binaries (MacOS)
         if: ${{ runner.os == 'macOS' }}
         run: |
-          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
+          codesign --force -s "${{ secrets.APPLE_DEVELOPER_ID_APP }}" -v "${{ env.VST3_PATH }}" --deep --strict --options=runtime --timestamp
           codesign --verify --deep --strict --verbose=2 "${{ env.VST3_PATH }}"
-          codesign --force -s "${{ secrets.DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
+          codesign --force -s "${{ secrets.APPLE_DEVELOPER_ID_APP }}" -v "${{ env.AU_PATH }}" --deep --strict --options=runtime --timestamp
           codesign --verify --deep --strict --verbose=2 "${{ env.AU_PATH }}"
 
       - name: Download Packages (MacOS)
@@ -84,7 +84,7 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
         run: |
           mkdir -p packaging/build/signed
-          productsign -s "${{ secrets.DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ env.PLUGIN_NAME }}.pkg" "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
+          productsign -s "${{ secrets.APPLE_DEVELOPER_ID_INSTALLER }}" "packaging/build/${{ env.PLUGIN_NAME }}.pkg" "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
           pkgutil --check-signature "packaging/build/signed/${{ env.PLUGIN_NAME }}.pkg"
 
       - name: Package Installer (MacOS)
@@ -99,8 +99,8 @@ jobs:
           
           # Create the .dmg
           cd packaging && appdmg dmg.json "${{ env.INSTALLER_NAME }}.dmg"
-          codesign -s "${{ secrets.DEVELOPER_ID_APP }}" --timestamp -i ${{ env.PLUGIN_BUNDLE_ID }} --force "${{ env.INSTALLER_NAME }}.dmg"
-          xcrun notarytool submit "${{ env.INSTALLER_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.DEVELOPER_TEAM_ID }} --wait
+          codesign -s "${{ secrets.APPLE_DEVELOPER_ID_APP }}" --timestamp -i ${{ env.PLUGIN_BUNDLE_ID }} --force "${{ env.INSTALLER_NAME }}.dmg"
+          xcrun notarytool submit "${{ env.INSTALLER_NAME }}.dmg" --apple-id ${{ secrets.APPLE_NOTARIZATION_USERNAME }} --password ${{ secrets.APPLE_NOTARIZATION_PASSWORD }} --team-id ${{ secrets.APPLE_DEVELOPER_TEAM_ID }} --wait
           xcrun stapler staple "${{ env.INSTALLER_NAME }}.dmg"
 
       - name: Upload Installer (MacOS)
