@@ -7,7 +7,7 @@ start_time=$(date +%s)
 COPY_BUILD_STEP=false
 DAW_TO_OPEN=
 REMOVE_PREV_BUILD=false
-BUILD_TYPE=Debug
+BUILD_TYPE=Release
 
 COMPANY_NAME="Black Box Audio"
 PLUGIN_NAME=Rotor
