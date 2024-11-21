@@ -7,12 +7,14 @@
 
 #pragma once
 
-#include "JuceHeader.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+
+using namespace juce;
 
 //==============================================================================
 /**
 */
-class RotorAudioProcessor : public AudioProcessor {
+class RotorAudioProcessor : public juce::AudioProcessor {
 public:
     //==============================================================================
     RotorAudioProcessor();
