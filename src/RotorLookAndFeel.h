@@ -10,9 +10,11 @@
 
 #pragma once
 
-#include "JuceHeader.h"
-
 #include "RotorData.h"
+
+#include <juce_gui_basics/juce_gui_basics.h>
+
+using namespace juce;
 
 //==============================================================================
 class RotorLookAndFeel : public LookAndFeel_V4 {

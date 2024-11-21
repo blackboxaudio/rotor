@@ -10,11 +10,14 @@
 
 #pragma once
 
-#include "JuceHeader.h"
-
 #include "RotorAnalyzer.h"
 #include "RotorLookAndFeel.h"
 #include "RotorProcessor.h"
+
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_opengl/juce_opengl.h>
+
+using namespace juce;
 
 typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
