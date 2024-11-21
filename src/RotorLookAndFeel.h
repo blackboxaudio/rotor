@@ -17,7 +17,7 @@
 using namespace juce;
 
 //==============================================================================
-class RotorLookAndFeel : public juce::LookAndFeel_V4 {
+class RotorLookAndFeel : public LookAndFeel_V4 {
 public:
     RotorLookAndFeel();
     ~RotorLookAndFeel();

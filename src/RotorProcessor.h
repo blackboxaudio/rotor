@@ -14,7 +14,7 @@ using namespace juce;
 //==============================================================================
 /**
 */
-class RotorAudioProcessor : public juce::AudioProcessor {
+class RotorAudioProcessor : public AudioProcessor {
 public:
     //==============================================================================
     RotorAudioProcessor();
